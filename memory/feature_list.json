@@ -27,7 +27,7 @@
       "name": "Create Project Pydantic Models",
       "description": "Create Pydantic v2 models for Project entity with validation rules",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create src/models/__init__.py package",
         "Create ProjectStatus enum (active, archived)",
@@ -42,7 +42,7 @@
       "name": "Create Response Wrapper Models",
       "description": "Create standardized response wrapper models following constitution format",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create src/models/responses.py",
         "Create ResponseMeta model with timestamp field",
