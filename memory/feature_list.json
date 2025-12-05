@@ -58,7 +58,7 @@
       "name": "Implement MockDataStore",
       "description": "Create in-memory data store with singleton pattern for CRUD operations",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create src/data/__init__.py package",
         "Create src/data/store.py with MockDataStore class",
@@ -78,7 +78,7 @@
       "name": "Create Seed Data Generator",
       "description": "Generate 52 realistic projects with varied owners and statuses on startup",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create src/data/seed.py",
         "Define 50+ realistic project names",
