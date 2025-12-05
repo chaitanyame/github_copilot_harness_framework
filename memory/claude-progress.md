@@ -7,8 +7,8 @@ This file bridges context between agent sessions. Each agent reads this at the s
 **Project**: Projects REST API (Reference Implementation)
 **Branch**: `001-projects-api`
 **Status**: Implementation in progress (TDD approach)
-**Features**: 12/34 passing
-**Tests**: 84 passing
+**Features**: 17/34 passing
+**Tests**: 122 passing
 **Last Updated**: 2025-01-XX
 
 ## Active Specification
@@ -40,6 +40,11 @@ This file bridges context between agent sessions. Each agent reads this at the s
 - ✅ Feature 10: PUT /projects/{id} (8 tests → implementation)
 - ✅ Feature 11: DELETE /projects/{id} (5 tests → implementation)
 - ✅ Feature 12: Status Filter Query Param (already included in GET list tests)
+- ✅ Feature 13: Custom Exception Classes (18 tests → implementation)
+- ✅ Feature 14: Error Handler Middleware (included in Feature 15-17 tests)
+- ✅ Feature 15: Format Validation Errors (included in error handler tests)
+- ✅ Feature 16: Handle 404 Consistently (4 tests → implementation)
+- ✅ Feature 17: Validation Edge Cases (9 tests → implementation)
 
 ### Specification Summary
 - **Endpoints**: 5 CRUD operations on `/api/v1/projects`
@@ -50,7 +55,7 @@ This file bridges context between agent sessions. Each agent reads this at the s
 ## What's Next
 
 ### Current Priority
-Continue with **Feature 13-17**: Error handling, custom exceptions, exception handlers.
+Continue with **Feature 18-21, 30-34**: Health endpoint, OpenAPI docs, Docker setup.
 
 ### Recommended Session Order
 
@@ -59,8 +64,8 @@ Continue with **Feature 13-17**: Error handling, custom exceptions, exception ha
 | ✅ 1 | 1-5 | Foundation (project, models, data store) |
 | ✅ 2 | 6-9 | Basic CRUD (GET list, GET one, POST) |
 | ✅ 3 | 10-12 | Complete CRUD (PUT, DELETE, filtering) |
-| 🔄 4 | 13-17 | Error handling |
-| 5 | 18-21, 30-34 | Health, docs, Docker |
+| ✅ 4 | 13-17 | Error handling |
+| 🔄 5 | 18-21, 30-34 | Health, docs, Docker |
 | 6 | 22-25 | Core tests |
 | 7 | 26-29 | Complete test coverage |
 

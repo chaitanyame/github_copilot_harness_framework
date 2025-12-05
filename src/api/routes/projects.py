@@ -17,7 +17,7 @@ from src.models.responses import (
 )
 from src.services.project_service import ProjectService
 
-router = APIRouter()
+router = APIRouter(tags=["Projects"])
 
 
 @router.get(

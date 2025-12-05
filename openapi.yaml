@@ -1,0 +1,582 @@
+openapi: 3.1.0
+info:
+  title: Projects API
+  description: RESTful API for managing projects with mock data. Provides CRUD operations
+    on projects with pagination, filtering, and validation.
+  version: 1.0.0
+servers:
+- url: http://localhost:8000
+  description: Local development server
+paths:
+  /api/v1/projects:
+    get:
+      tags:
+      - projects
+      - Projects
+      summary: List all projects
+      description: Get a paginated list of projects with optional status filtering.
+      operationId: list_projects_api_v1_projects_get
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/ProjectStatus'
+          - type: 'null'
+          description: Filter by project status
+          title: Status
+        description: Filter by project status
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          description: Maximum number of projects to return (1-100)
+          default: 20
+          title: Limit
+        description: Maximum number of projects to return (1-100)
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of projects to skip
+          default: 0
+          title: Offset
+        description: Number of projects to skip
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectListResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - projects
+      - Projects
+      summary: Create a new project
+      description: Create a new project with the provided data.
+      operationId: create_project_api_v1_projects_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/projects/{project_id}:
+    get:
+      tags:
+      - projects
+      - Projects
+      summary: Get a project by ID
+      description: Retrieve a single project by its unique identifier.
+      operationId: get_project_api_v1_projects__project_id__get
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Project Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - projects
+      - Projects
+      summary: Update a project
+      description: Update an existing project with the provided data.
+      operationId: update_project_api_v1_projects__project_id__put
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Project Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - projects
+      - Projects
+      summary: Delete a project
+      description: Delete a project by its unique identifier.
+      operationId: delete_project_api_v1_projects__project_id__delete
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Project Id
+      responses:
+        '204':
+          description: Successful Response
+        '404':
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      tags:
+      - Health
+      summary: Health check
+      description: Check if the API is healthy and running.
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Healthcheck
+  /:
+    get:
+      tags:
+      - Health
+      summary: Root
+      description: Root endpoint - welcome message.
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    ErrorDetail:
+      properties:
+        field:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Field
+          description: The field that caused the error (if applicable)
+        message:
+          type: string
+          title: Message
+          description: Human-readable error message
+        code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Code
+          description: Machine-readable error code
+      type: object
+      required:
+      - message
+      title: ErrorDetail
+      description: Detailed error information.
+    ErrorResponse:
+      properties:
+        error:
+          type: string
+          title: Error
+          description: Error type/category
+        message:
+          type: string
+          title: Message
+          description: Human-readable error message
+        details:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ErrorDetail'
+            type: array
+          - type: 'null'
+          title: Details
+          description: Detailed error information for validation errors
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+          description: Response metadata
+      type: object
+      required:
+      - error
+      - message
+      title: ErrorResponse
+      description: Standardized error response format.
+      example:
+        details:
+        - code: string_too_short
+          field: name
+          message: String should have at least 1 character
+        error: validation_error
+        message: Request validation failed
+        meta:
+          timestamp: '2024-01-20T15:00:00Z'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PaginationMeta:
+      properties:
+        total:
+          type: integer
+          minimum: 0.0
+          title: Total
+          description: Total number of items
+        limit:
+          type: integer
+          maximum: 100.0
+          minimum: 1.0
+          title: Limit
+          description: Maximum items per page
+        offset:
+          type: integer
+          minimum: 0.0
+          title: Offset
+          description: Number of items skipped
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Response timestamp in UTC
+      type: object
+      required:
+      - total
+      - limit
+      - offset
+      title: PaginationMeta
+      description: Metadata for paginated list responses.
+    Project:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Name
+          description: Project name (1-100 characters)
+          examples:
+          - My Awesome Project
+        description:
+          type: string
+          maxLength: 1000
+          title: Description
+          description: Project description (0-1000 characters)
+          default: ''
+          examples:
+          - A sample project for demonstration
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+          description: Project status
+          default: active
+          examples:
+          - active
+        owner:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Owner
+          description: Project owner username (1-100 characters)
+          examples:
+          - john.doe
+        id:
+          type: string
+          format: uuid
+          title: Id
+          description: Unique project identifier
+          examples:
+          - 123e4567-e89b-12d3-a456-426614174000
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp when the project was created
+          examples:
+          - '2024-01-15T10:30:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Timestamp when the project was last updated
+          examples:
+          - '2024-01-20T14:45:00Z'
+      type: object
+      required:
+      - name
+      - owner
+      - id
+      - created_at
+      - updated_at
+      title: Project
+      description: Complete project model with all fields including server-generated
+        ones.
+      example:
+        created_at: '2024-01-15T10:30:00Z'
+        description: A sample project for demonstration
+        id: 123e4567-e89b-12d3-a456-426614174000
+        name: Sample Project
+        owner: john.doe
+        status: active
+        updated_at: '2024-01-20T14:45:00Z'
+    ProjectCreate:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Name
+          description: Project name (1-100 characters)
+          examples:
+          - My Awesome Project
+        description:
+          type: string
+          maxLength: 1000
+          title: Description
+          description: Project description (0-1000 characters)
+          default: ''
+          examples:
+          - A sample project for demonstration
+        status:
+          $ref: '#/components/schemas/ProjectStatus'
+          description: Project status
+          default: active
+          examples:
+          - active
+        owner:
+          type: string
+          maxLength: 100
+          minLength: 1
+          title: Owner
+          description: Project owner username (1-100 characters)
+          examples:
+          - john.doe
+      type: object
+      required:
+      - name
+      - owner
+      title: ProjectCreate
+      description: Request model for creating a new project.
+      example:
+        description: A project to demonstrate the API
+        name: My New Project
+        owner: john.doe
+        status: active
+    ProjectListResponse:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/Project'
+          type: array
+          title: Data
+          description: List of projects
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+          description: Pagination metadata
+      type: object
+      required:
+      - data
+      - meta
+      title: ProjectListResponse
+      description: Response wrapper for a list of projects.
+      example:
+        data:
+        - created_at: '2024-01-15T10:30:00Z'
+          description: First project
+          id: 123e4567-e89b-12d3-a456-426614174000
+          name: Project Alpha
+          owner: john.doe
+          status: active
+          updated_at: '2024-01-20T14:45:00Z'
+        meta:
+          limit: 20
+          offset: 0
+          timestamp: '2024-01-20T15:00:00Z'
+          total: 1
+    ProjectResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/Project'
+          description: The project data
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+          description: Response metadata
+      type: object
+      required:
+      - data
+      title: ProjectResponse
+      description: Response wrapper for a single project.
+      example:
+        data:
+          created_at: '2024-01-15T10:30:00Z'
+          description: A sample project
+          id: 123e4567-e89b-12d3-a456-426614174000
+          name: Sample Project
+          owner: john.doe
+          status: active
+          updated_at: '2024-01-20T14:45:00Z'
+        meta:
+          timestamp: '2024-01-20T15:00:00Z'
+    ProjectStatus:
+      type: string
+      enum:
+      - active
+      - archived
+      title: ProjectStatus
+      description: Project status enumeration.
+    ProjectUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Name
+          description: Project name (1-100 characters)
+          examples:
+          - Updated Project Name
+        description:
+          anyOf:
+          - type: string
+            maxLength: 1000
+          - type: 'null'
+          title: Description
+          description: Project description (0-1000 characters)
+          examples:
+          - Updated description
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/ProjectStatus'
+          - type: 'null'
+          description: Project status
+          examples:
+          - archived
+        owner:
+          anyOf:
+          - type: string
+            maxLength: 100
+            minLength: 1
+          - type: 'null'
+          title: Owner
+          description: Project owner username (1-100 characters)
+          examples:
+          - jane.doe
+      type: object
+      title: ProjectUpdate
+      description: 'Request model for updating an existing project.
+
+
+        All fields are optional - only provided fields will be updated.'
+      example:
+        name: Updated Project Name
+        status: archived
+    ResponseMeta:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+          description: Response timestamp in UTC
+      type: object
+      title: ResponseMeta
+      description: Metadata for single-item responses.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+tags:
+- name: Projects
+  description: Operations for managing projects (CRUD)
+- name: Health
+  description: Health check endpoints for monitoring

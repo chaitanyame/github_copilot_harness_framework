@@ -275,7 +275,7 @@
       "name": "Implement /health Endpoint",
       "description": "Health check endpoint for monitoring",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create src/api/routes/health.py",
         "Implement GET /health (not under /api/v1)",
@@ -289,7 +289,7 @@
       "name": "Configure OpenAPI Metadata",
       "description": "Complete OpenAPI documentation with tags and descriptions",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Set title to 'Projects API'",
         "Add description explaining the API purpose",
@@ -305,7 +305,7 @@
       "name": "Export OpenAPI Spec to File",
       "description": "Create script to export OpenAPI specification to YAML",
       "priority": "low",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create scripts/export_openapi.py",
         "Export app.openapi() to openapi.yaml",
@@ -318,7 +318,7 @@
       "name": "Verify Swagger UI Functionality",
       "description": "Ensure Swagger UI works for all endpoints",
       "priority": "low",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Verify /docs loads Swagger UI",
         "Verify all endpoints visible with descriptions",
