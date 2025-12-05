@@ -2,6 +2,83 @@
 
 A template repository for building **long-lived autonomous agents** within VS Code GitHub Copilot, based on [Anthropic's "Effective Harnesses for Long-Running Agents"](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
 
+---
+
+## Projects API (Reference Implementation)
+
+This repository contains a reference implementation of a **REST API with Mock Data** built using the Agent Harness Framework.
+
+### Features
+
+- ✅ FastAPI with CORS and OpenAPI documentation
+- ✅ Full CRUD operations on `/api/v1/projects`
+- ✅ In-memory mock data store (52 seeded projects)
+- ✅ Pagination and status filtering
+- ✅ Standardized error responses
+- ✅ 98% test coverage (142 tests)
+- ✅ Docker support
+
+### Quick Start
+
+#### Local Development
+
+```bash
+# Clone and setup
+git clone https://github.com/your-org/projects-api.git
+cd projects-api
+python -m venv venv
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
+
+# Run the server
+uvicorn src.main:app --reload
+
+# Run tests
+pytest --cov=src
+```
+
+#### Docker
+
+```bash
+# Build the image
+docker build -t projects-api .
+
+# Run the container
+docker run -p 8000:8000 projects-api
+
+# Or use docker-compose
+docker-compose up
+```
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/api/v1/projects` | List projects (paginated) |
+| GET | `/api/v1/projects/{id}` | Get project by ID |
+| POST | `/api/v1/projects` | Create project |
+| PUT | `/api/v1/projects/{id}` | Update project |
+| DELETE | `/api/v1/projects/{id}` | Delete project |
+
+### Query Parameters
+
+- `limit` (int): Max projects to return (default: 20, max: 100)
+- `offset` (int): Number to skip (default: 0)
+- `status` (enum): Filter by `active` or `archived`
+
+### Documentation
+
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **OpenAPI JSON**: http://localhost:8000/openapi.json
+
+---
+
+## Agent Harness Framework
+
+The following sections describe the framework used to build this implementation.
+
 ## The Problem
 
 AI agents face a fundamental challenge: **each new context window starts with no memory**. Without proper scaffolding:
