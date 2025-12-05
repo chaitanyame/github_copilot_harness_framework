@@ -1,31 +1,543 @@
 {
-  "_comment": "This is a template. Replace with your project's features using /harness.generate",
-  "_meta": {
-    "description": "Feature list tracking - source of truth for all work",
-    "version": "1.0.0",
-    "created": null,
-    "last_updated": null
-  },
-  "_rules": {
-    "allowed": "ONLY change 'passes' field from false to true when verified",
-    "forbidden": [
-      "Never remove features",
-      "Never edit descriptions",
-      "Never modify steps",
-      "Never reorder features"
-    ]
-  },
-  "_example": {
-    "id": 1,
-    "name": "Example Feature",
-    "description": "What this feature does",
-    "priority": "high",
-    "passes": false,
-    "steps": [
-      "Step 1 - Implementation action",
-      "Step 2 - Another action",
-      "Step 3 - Verify feature works"
-    ]
-  },
-  "features": []
+  "branch": "001-projects-api",
+  "specification": "specs/001-projects-api/spec.md",
+  "name": "Projects REST API",
+  "description": "RESTful API for managing projects with mock data - reference implementation demonstrating clean REST design patterns",
+  "version": "1.0.0",
+  "created": "2024-12-04",
+  "last_updated": "2024-12-04",
+  "features": [
+    {
+      "id": 1,
+      "name": "Initialize Python Project",
+      "description": "Set up Python project structure with FastAPI, Pydantic, and development dependencies",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create requirements.txt with fastapi, uvicorn, pydantic>=2.5.0",
+        "Create requirements-dev.txt with pytest, pytest-cov, httpx, ruff, black",
+        "Create pyproject.toml with project metadata",
+        "Create src/__init__.py and src/main.py entry point",
+        "Create .gitignore for Python projects",
+        "Verify: pip install -r requirements.txt succeeds"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Create Project Pydantic Models",
+      "description": "Create Pydantic v2 models for Project entity with validation rules",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/models/__init__.py package",
+        "Create ProjectStatus enum (active, archived)",
+        "Create Project model with all 7 fields (id, name, description, status, owner, created_at, updated_at)",
+        "Create ProjectCreate request model with validation (name 1-100 chars, description 0-1000 chars)",
+        "Create ProjectUpdate request model with required fields",
+        "Verify: Model validation rejects invalid data"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Create Response Wrapper Models",
+      "description": "Create standardized response wrapper models following constitution format",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/models/responses.py",
+        "Create ResponseMeta model with timestamp field",
+        "Create PaginationMeta model with total, limit, offset, timestamp",
+        "Create ProjectResponse wrapper for single project",
+        "Create ProjectListResponse wrapper for project list",
+        "Create ErrorDetail and ErrorResponse models",
+        "Verify: Response models serialize correctly to JSON"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Implement MockDataStore",
+      "description": "Create in-memory data store with singleton pattern for CRUD operations",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/data/__init__.py package",
+        "Create src/data/store.py with MockDataStore class",
+        "Implement singleton pattern with get_instance()",
+        "Implement get_all(status, limit, offset) with filtering and pagination",
+        "Implement get_by_id(id) returning project or None",
+        "Implement create(project) with UUID and timestamp generation",
+        "Implement update(id, data) with updated_at timestamp",
+        "Implement delete(id) returning bool",
+        "Implement count(status) for totals",
+        "Add reset() method for testing",
+        "Verify: CRUD operations work correctly"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Create Seed Data Generator",
+      "description": "Generate 52 realistic projects with varied owners and statuses on startup",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/data/seed.py",
+        "Define 50+ realistic project names",
+        "Define 8-10 owners with distribution (some have 10+ projects)",
+        "Implement seed_data() function",
+        "Generate ~70% active, ~30% archived projects",
+        "Spread created_at across past 12 months",
+        "Ensure updated_at >= created_at",
+        "Verify: MockDataStore.count() >= 50 after seeding"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Create FastAPI App with CORS",
+      "description": "Create main FastAPI application with CORS middleware and API versioning",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Update src/main.py with FastAPI app",
+        "Add CORS middleware allowing all origins",
+        "Configure /api/v1 prefix for routes",
+        "Add startup event to seed data",
+        "Create src/config.py for settings",
+        "Verify: uvicorn src.main:app runs and /docs loads"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Implement GET /projects List",
+      "description": "List projects endpoint with pagination (limit, offset query params)",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/api/routes/__init__.py package",
+        "Create src/api/routes/projects.py with router",
+        "Create src/services/__init__.py package",
+        "Create src/services/project_service.py",
+        "Implement GET /api/v1/projects endpoint",
+        "Add limit param (default=10, max=100)",
+        "Add offset param (default=0, min=0)",
+        "Return ProjectListResponse with meta.total, meta.limit, meta.offset",
+        "Verify: curl /api/v1/projects returns paginated list"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Implement GET /projects/{id}",
+      "description": "Get single project by UUID with 404 handling",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Add GET /api/v1/projects/{project_id} endpoint",
+        "Validate UUID format in path parameter",
+        "Return ProjectResponse on success",
+        "Return 404 if project not found",
+        "Verify: GET with valid ID returns project, invalid returns 404"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Implement POST /projects",
+      "description": "Create project endpoint with validation and 201 response",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Add POST /api/v1/projects endpoint",
+        "Accept ProjectCreate request body",
+        "Auto-generate UUID for id",
+        "Set created_at and updated_at to current time",
+        "Default status to 'active' if not provided",
+        "Return 201 Created with ProjectResponse",
+        "Verify: POST creates project and returns with ID"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Implement PUT /projects/{id}",
+      "description": "Update project endpoint with 404 handling",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Add PUT /api/v1/projects/{project_id} endpoint",
+        "Accept ProjectUpdate request body",
+        "Preserve original created_at",
+        "Update updated_at to current time",
+        "Return 404 if project not found",
+        "Return 200 with updated ProjectResponse",
+        "Verify: PUT updates project and changes updated_at"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Implement DELETE /projects/{id}",
+      "description": "Delete project endpoint with 204 response",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Add DELETE /api/v1/projects/{project_id} endpoint",
+        "Return 204 No Content on success (no body)",
+        "Return 404 if project not found",
+        "Verify: DELETE removes project, subsequent GET returns 404"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Add Status Filter Query Param",
+      "description": "Add ?status=active|archived filter to GET /projects",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Add status query parameter to GET /projects",
+        "Filter by 'active' or 'archived' when provided",
+        "Return all projects when status not provided",
+        "Update meta.total to reflect filtered count",
+        "Verify: ?status=active returns only active projects"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Create Custom Exception Classes",
+      "description": "Create exception classes for API errors (404, 422, 400)",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/api/exceptions.py",
+        "Create base APIException class with code, message, status_code, details",
+        "Create NotFoundException for 404 errors",
+        "Create ValidationException for 422 errors",
+        "Create BadRequestException for 400 errors",
+        "Verify: Exceptions can be raised with proper attributes"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Implement Error Handler Middleware",
+      "description": "Global exception handlers converting errors to standard response format",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/api/middleware/__init__.py package",
+        "Create src/api/middleware/error_handler.py",
+        "Add handler for custom APIException",
+        "Add handler for RequestValidationError (422)",
+        "Add handler for unhandled exceptions (500)",
+        "All errors return {error: {code, message, details}}",
+        "Verify: Invalid request returns proper error format"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Format Validation Errors (422)",
+      "description": "Ensure validation errors include field-level details",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Format Pydantic validation errors with field names",
+        "Include multiple errors in single response",
+        "Map field names to match request body",
+        "Add clear error messages for each field",
+        "Verify: Missing name and owner returns both errors"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Handle 404 Not Found Consistently",
+      "description": "Use standard error format for all 404 responses",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Update GET /projects/{id} to use NotFoundException",
+        "Update PUT /projects/{id} to use NotFoundException",
+        "Update DELETE /projects/{id} to use NotFoundException",
+        "Include requested ID in error details",
+        "Verify: All 404s return consistent format with NOT_FOUND code"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Add Validation Edge Cases",
+      "description": "Handle edge cases: invalid JSON, invalid UUID, boundary values",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Handle invalid JSON with 400 Bad Request",
+        "Validate UUID format in path params (422 for invalid)",
+        "Accept name exactly 100 chars, reject 101",
+        "Accept description exactly 1000 chars, reject 1001",
+        "Handle empty request body with 422",
+        "Verify: All edge cases return appropriate errors"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Implement /health Endpoint",
+      "description": "Health check endpoint for monitoring",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create src/api/routes/health.py",
+        "Implement GET /health (not under /api/v1)",
+        "Return {status: 'healthy', version: '1.0.0', timestamp: '...'}",
+        "Register health router in main app",
+        "Verify: curl /health returns 200 with status"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Configure OpenAPI Metadata",
+      "description": "Complete OpenAPI documentation with tags and descriptions",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Set title to 'Projects API'",
+        "Add description explaining the API purpose",
+        "Set version to '1.0.0'",
+        "Add tags for 'Projects' and 'Health'",
+        "Add localhost server in servers list",
+        "Add operation IDs to all endpoints",
+        "Verify: /docs shows complete documentation"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Export OpenAPI Spec to File",
+      "description": "Create script to export OpenAPI specification to YAML",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "Create scripts/export_openapi.py",
+        "Export app.openapi() to openapi.yaml",
+        "Format as valid YAML",
+        "Verify: python scripts/export_openapi.py creates openapi.yaml"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Verify Swagger UI Functionality",
+      "description": "Ensure Swagger UI works for all endpoints",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "Verify /docs loads Swagger UI",
+        "Verify all endpoints visible with descriptions",
+        "Test 'Try it out' for each endpoint",
+        "Verify /redoc also works",
+        "Verify: All endpoints testable in Swagger UI"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Set Up Pytest with Fixtures",
+      "description": "Configure pytest with test client and shared fixtures",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create tests/__init__.py package",
+        "Create tests/conftest.py with shared fixtures",
+        "Create client fixture with TestClient",
+        "Create seeded_client fixture with seed data",
+        "Add fixture to reset MockDataStore between tests",
+        "Create pytest.ini or configure in pyproject.toml",
+        "Verify: pytest runs without errors"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Write Model Unit Tests",
+      "description": "Unit tests for Pydantic model validation",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create tests/unit/__init__.py package",
+        "Create tests/unit/test_models.py",
+        "Test ProjectCreate with valid data",
+        "Test ProjectCreate rejects missing required fields",
+        "Test name length validation (1-100 chars)",
+        "Test description length validation (0-1000 chars)",
+        "Test status enum validation",
+        "Test default values",
+        "Verify: pytest tests/unit/test_models.py passes"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Write Data Store Unit Tests",
+      "description": "Unit tests for MockDataStore CRUD operations",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create tests/unit/test_store.py",
+        "Test create adds project with generated ID",
+        "Test get_by_id returns correct project",
+        "Test get_by_id returns None for missing",
+        "Test get_all with pagination",
+        "Test get_all with status filter",
+        "Test update modifies project",
+        "Test delete removes project",
+        "Test count with and without filter",
+        "Verify: pytest tests/unit/test_store.py passes"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Write CRUD Integration Tests",
+      "description": "Integration tests for all CRUD endpoint happy paths",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create tests/integration/__init__.py package",
+        "Create tests/integration/test_projects_crud.py",
+        "Test GET /projects returns list with correct format",
+        "Test GET /projects/{id} returns single project",
+        "Test POST /projects creates with 201 and returns project",
+        "Test PUT /projects/{id} updates and returns project",
+        "Test DELETE /projects/{id} returns 204",
+        "Verify response format matches spec",
+        "Verify: pytest tests/integration/test_projects_crud.py passes"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Write Error Handling Tests",
+      "description": "Integration tests for all error scenarios",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create tests/integration/test_error_handling.py",
+        "Test 404 for GET non-existent project",
+        "Test 404 for PUT non-existent project",
+        "Test 404 for DELETE non-existent project",
+        "Test 422 for missing required fields",
+        "Test 422 for invalid field values",
+        "Test error response format matches spec",
+        "Verify: pytest tests/integration/test_error_handling.py passes"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Write Pagination/Filter Tests",
+      "description": "Integration tests for pagination and status filtering",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create tests/integration/test_projects_filter.py",
+        "Test default pagination (limit=10, offset=0)",
+        "Test custom limit and offset values",
+        "Test limit capped at 100",
+        "Test offset beyond total returns empty list",
+        "Test ?status=active returns only active",
+        "Test ?status=archived returns only archived",
+        "Test meta.total reflects filtered count",
+        "Verify: pytest tests/integration/test_projects_filter.py passes"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Write Edge Case Tests",
+      "description": "Integration tests for specification edge cases",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create tests/integration/test_edge_cases.py",
+        "Test empty project list returns {data: [], meta: {...}}",
+        "Test name exactly 100 chars is valid",
+        "Test description exactly 1000 chars is valid",
+        "Test invalid UUID format returns error",
+        "Test empty request body returns 422",
+        "Test extra fields in request are ignored",
+        "Verify: pytest tests/integration/test_edge_cases.py passes"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "Verify 90%+ Test Coverage",
+      "description": "Run coverage report and ensure target met",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Run pytest --cov=src --cov-report=term-missing",
+        "Generate HTML coverage report",
+        "Identify any uncovered code paths",
+        "Add tests for uncovered paths if needed",
+        "Verify: Coverage >= 90% for src/ directory"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "Create Dockerfile",
+      "description": "Production-ready Dockerfile using Python slim image",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create Dockerfile with python:3.11-slim base",
+        "Set WORKDIR to /app",
+        "Copy and install requirements.txt",
+        "Copy src/ directory",
+        "Expose port 8000",
+        "Set CMD to run uvicorn",
+        "Verify: docker build -t projects-api . succeeds"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "Create docker-compose.yml",
+      "description": "Docker Compose configuration for easy local development",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "Create docker-compose.yml",
+        "Define api service building from Dockerfile",
+        "Map port 8000:8000",
+        "Add optional volume mount for development",
+        "Verify: docker-compose up starts the app"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "Create .dockerignore",
+      "description": "Exclude unnecessary files from Docker build context",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "Create .dockerignore file",
+        "Exclude .git/, __pycache__/, *.pyc",
+        "Exclude venv/, .venv/",
+        "Exclude tests/, .pytest_cache/",
+        "Exclude .env, *.md (except README)",
+        "Verify: Docker build context is minimal"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "Test Container Build and Run",
+      "description": "Verify Docker container works correctly",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Build image with docker build -t projects-api .",
+        "Run container with docker run -p 8000:8000 projects-api",
+        "Verify /health returns 200",
+        "Verify /api/v1/projects returns seeded data",
+        "Check container logs show startup info",
+        "Verify: Container runs and serves API correctly"
+      ]
+    },
+    {
+      "id": 34,
+      "name": "Document Docker Usage in README",
+      "description": "Add Docker build and run instructions to README",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Add Docker section to README.md",
+        "Document docker build command",
+        "Document docker run command",
+        "Document docker-compose usage",
+        "List environment variables",
+        "Verify: README has complete Docker instructions"
+      ]
+    }
+  ]
 }
