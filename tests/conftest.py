@@ -2,6 +2,18 @@
 """Pytest configuration and fixtures."""
 
 import pytest
+from fastapi.testclient import TestClient
+
+from src.main import app
+from src.data.store import MockDataStore
+
+
+@pytest.fixture
+def client():
+    """Create a test client for the FastAPI app."""
+    # Reset data store before each test
+    MockDataStore.get_instance().reset()
+    return TestClient(app)
 
 
 @pytest.fixture

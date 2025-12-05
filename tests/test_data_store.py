@@ -32,18 +32,20 @@ class TestMockDataStoreSingleton:
         assert store1 is store2
 
     def test_reset_clears_and_reseeds_data(self):
-        """reset() should clear data and reseed."""
+        """reset() should clear data and reseed to initial count."""
         from src.data.store import MockDataStore
 
         store = MockDataStore.get_instance()
+        store.reset()
         _, initial_count = store.get_all()
 
-        # Delete a project
-        projects, _ = store.get_all()
-        if projects:
-            store.delete(projects[0].id)
+        # Create a new project (increasing count)
+        from src.models.project import ProjectCreate
+        store.create(ProjectCreate(name="Extra", owner="user"))
+        _, after_create = store.get_all()
+        assert after_create == initial_count + 1
 
-        # Reset should restore
+        # Reset should restore to seed count
         store.reset()
         _, reset_count = store.get_all()
         assert reset_count == initial_count

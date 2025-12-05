@@ -95,7 +95,7 @@
       "name": "Create FastAPI App with CORS",
       "description": "Create main FastAPI application with CORS middleware and API versioning",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Update src/main.py with FastAPI app",
         "Add CORS middleware allowing all origins",
@@ -110,7 +110,7 @@
       "name": "Implement GET /projects List",
       "description": "List projects endpoint with pagination (limit, offset query params)",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create src/api/routes/__init__.py package",
         "Create src/api/routes/projects.py with router",
@@ -128,7 +128,7 @@
       "name": "Implement GET /projects/{id}",
       "description": "Get single project by UUID with 404 handling",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Add GET /api/v1/projects/{project_id} endpoint",
         "Validate UUID format in path parameter",
@@ -142,7 +142,7 @@
       "name": "Implement POST /projects",
       "description": "Create project endpoint with validation and 201 response",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Add POST /api/v1/projects endpoint",
         "Accept ProjectCreate request body",
