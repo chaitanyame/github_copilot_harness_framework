@@ -287,3 +287,144 @@ class TestCreateProject:
 
         assert get_response.status_code == 200
         assert get_response.json()["data"]["name"] == "Retrievable Project"
+
+
+class TestUpdateProject:
+    """Tests for Feature 10: PUT /projects/{id}."""
+
+    def test_update_project_returns_200(self, client: TestClient):
+        """PUT /api/v1/projects/{id} should return 200 OK."""
+        # Get existing project
+        list_response = client.get("/api/v1/projects?limit=1")
+        project_id = list_response.json()["data"][0]["id"]
+
+        update_data = {"name": "Updated Project Name"}
+        response = client.put(f"/api/v1/projects/{project_id}", json=update_data)
+
+        assert response.status_code == 200
+
+    def test_update_project_modifies_fields(self, client: TestClient):
+        """Updated fields should be reflected in response."""
+        list_response = client.get("/api/v1/projects?limit=1")
+        project_id = list_response.json()["data"][0]["id"]
+
+        update_data = {
+            "name": "Completely New Name",
+            "description": "Updated description",
+        }
+        response = client.put(f"/api/v1/projects/{project_id}", json=update_data)
+        data = response.json()
+
+        assert data["data"]["name"] == "Completely New Name"
+        assert data["data"]["description"] == "Updated description"
+
+    def test_update_project_preserves_unmodified_fields(self, client: TestClient):
+        """Fields not in update should remain unchanged."""
+        list_response = client.get("/api/v1/projects?limit=1")
+        original = list_response.json()["data"][0]
+        project_id = original["id"]
+
+        update_data = {"name": "Only Name Changed"}
+        response = client.put(f"/api/v1/projects/{project_id}", json=update_data)
+        data = response.json()
+
+        assert data["data"]["name"] == "Only Name Changed"
+        assert data["data"]["owner"] == original["owner"]
+
+    def test_update_project_updates_timestamp(self, client: TestClient):
+        """updated_at should change after update."""
+        list_response = client.get("/api/v1/projects?limit=1")
+        original = list_response.json()["data"][0]
+        project_id = original["id"]
+        original_updated_at = original["updated_at"]
+
+        update_data = {"name": "Timestamp Test"}
+        response = client.put(f"/api/v1/projects/{project_id}", json=update_data)
+        data = response.json()
+
+        assert data["data"]["updated_at"] != original_updated_at
+
+    def test_update_project_can_change_status(self, client: TestClient):
+        """Should be able to archive a project."""
+        list_response = client.get("/api/v1/projects?status=active&limit=1")
+        project_id = list_response.json()["data"][0]["id"]
+
+        update_data = {"status": "archived"}
+        response = client.put(f"/api/v1/projects/{project_id}", json=update_data)
+        data = response.json()
+
+        assert data["data"]["status"] == "archived"
+
+    def test_update_project_not_found_returns_404(self, client: TestClient):
+        """Non-existent project should return 404."""
+        fake_id = str(uuid4())
+        update_data = {"name": "Won't Work"}
+        response = client.put(f"/api/v1/projects/{fake_id}", json=update_data)
+
+        assert response.status_code == 404
+
+    def test_update_project_invalid_uuid_returns_422(self, client: TestClient):
+        """Invalid UUID should return 422."""
+        update_data = {"name": "Won't Work"}
+        response = client.put("/api/v1/projects/not-a-uuid", json=update_data)
+
+        assert response.status_code == 422
+
+    def test_update_project_invalid_data_returns_422(self, client: TestClient):
+        """Invalid update data should return 422."""
+        list_response = client.get("/api/v1/projects?limit=1")
+        project_id = list_response.json()["data"][0]["id"]
+
+        update_data = {"name": "x" * 101}  # Name too long
+        response = client.put(f"/api/v1/projects/{project_id}", json=update_data)
+
+        assert response.status_code == 422
+
+
+class TestDeleteProject:
+    """Tests for Feature 11: DELETE /projects/{id}."""
+
+    def test_delete_project_returns_204(self, client: TestClient):
+        """DELETE /api/v1/projects/{id} should return 204 No Content."""
+        # Create a project to delete
+        new_project = {"name": "To Be Deleted", "owner": "test.user"}
+        create_response = client.post("/api/v1/projects", json=new_project)
+        project_id = create_response.json()["data"]["id"]
+
+        response = client.delete(f"/api/v1/projects/{project_id}")
+
+        assert response.status_code == 204
+
+    def test_delete_project_removes_from_store(self, client: TestClient):
+        """Deleted project should not be retrievable."""
+        new_project = {"name": "Will Be Gone", "owner": "test.user"}
+        create_response = client.post("/api/v1/projects", json=new_project)
+        project_id = create_response.json()["data"]["id"]
+
+        client.delete(f"/api/v1/projects/{project_id}")
+        get_response = client.get(f"/api/v1/projects/{project_id}")
+
+        assert get_response.status_code == 404
+
+    def test_delete_project_not_found_returns_404(self, client: TestClient):
+        """Non-existent project should return 404."""
+        fake_id = str(uuid4())
+        response = client.delete(f"/api/v1/projects/{fake_id}")
+
+        assert response.status_code == 404
+
+    def test_delete_project_invalid_uuid_returns_422(self, client: TestClient):
+        """Invalid UUID should return 422."""
+        response = client.delete("/api/v1/projects/not-a-uuid")
+
+        assert response.status_code == 422
+
+    def test_delete_project_no_response_body(self, client: TestClient):
+        """204 response should have no body."""
+        new_project = {"name": "No Body Test", "owner": "test.user"}
+        create_response = client.post("/api/v1/projects", json=new_project)
+        project_id = create_response.json()["data"]["id"]
+
+        response = client.delete(f"/api/v1/projects/{project_id}")
+
+        assert response.content == b""

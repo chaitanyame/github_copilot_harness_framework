@@ -4,10 +4,10 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from src.config import settings
-from src.models.project import ProjectCreate, ProjectStatus
+from src.models.project import ProjectCreate, ProjectStatus, ProjectUpdate
 from src.models.responses import (
     ErrorResponse,
     PaginationMeta,
@@ -94,3 +94,56 @@ def create_project(project_data: ProjectCreate) -> ProjectResponse:
     project = service.create(project_data)
 
     return ProjectResponse(data=project)
+
+
+@router.put(
+    "/{project_id}",
+    response_model=ProjectResponse,
+    responses={
+        404: {"model": ErrorResponse, "description": "Project not found"},
+        422: {"model": ErrorResponse, "description": "Validation error"},
+    },
+    summary="Update a project",
+    description="Update an existing project with the provided data.",
+)
+def update_project(project_id: UUID, update_data: ProjectUpdate) -> ProjectResponse:
+    """Update an existing project."""
+    service = ProjectService()
+    project = service.update(project_id, update_data)
+
+    if project is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "error": "not_found",
+                "message": f"Project with ID '{project_id}' not found",
+            },
+        )
+
+    return ProjectResponse(data=project)
+
+
+@router.delete(
+    "/{project_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        404: {"model": ErrorResponse, "description": "Project not found"},
+    },
+    summary="Delete a project",
+    description="Delete a project by its unique identifier.",
+)
+def delete_project(project_id: UUID) -> Response:
+    """Delete a project by ID."""
+    service = ProjectService()
+    deleted = service.delete(project_id)
+
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "error": "not_found",
+                "message": f"Project with ID '{project_id}' not found",
+            },
+        )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
