@@ -163,15 +163,16 @@ class TestGetProjectById:
         assert response.status_code == 404
 
     def test_get_project_404_has_error_format(self, client: TestClient):
-        """404 response should follow error format."""
+        """404 response should follow standard error format."""
         fake_id = str(uuid4())
         response = client.get(f"/api/v1/projects/{fake_id}")
         data = response.json()
 
-        # FastAPI wraps in 'detail' for HTTPException
-        assert "detail" in data
-        assert "error" in data["detail"]
-        assert "message" in data["detail"]
+        # Standard error format with nested error object
+        assert "error" in data
+        assert "code" in data["error"]
+        assert "message" in data["error"]
+        assert data["error"]["code"] == "NOT_FOUND"
 
     def test_get_project_invalid_uuid_returns_422(self, client: TestClient):
         """Invalid UUID format should return 422."""

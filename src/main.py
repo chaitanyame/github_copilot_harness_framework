@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.api.middleware import register_exception_handlers
 from src.api.routes import api_router
 from src.config import settings
 from src.data.store import MockDataStore
@@ -34,6 +35,9 @@ app.add_middleware(
     allow_methods=settings.cors_allow_methods,
     allow_headers=settings.cors_allow_headers,
 )
+
+# Register exception handlers
+register_exception_handlers(app)
 
 # Include API routes
 app.include_router(api_router)

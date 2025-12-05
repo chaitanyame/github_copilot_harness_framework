@@ -7,9 +7,9 @@ This file bridges context between agent sessions. Each agent reads this at the s
 **Project**: Projects REST API (Reference Implementation)
 **Branch**: `001-projects-api`
 **Status**: Implementation in progress (TDD approach)
-**Features**: 5/34 passing
-**Tests**: 44 passing
-**Last Updated**: 2024-12-05
+**Features**: 12/34 passing
+**Tests**: 84 passing
+**Last Updated**: 2025-01-XX
 
 ## Active Specification
 
@@ -33,6 +33,13 @@ This file bridges context between agent sessions. Each agent reads this at the s
 - ✅ Feature 3: Response Wrapper Models (included in Feature 2 tests)
 - ✅ Feature 4: MockDataStore (23 tests → implementation)
 - ✅ Feature 5: Seed Data Generator (included in Feature 4 tests)
+- ✅ Feature 6: FastAPI App with CORS (3 tests → implementation)
+- ✅ Feature 7: GET /projects List with pagination (9 tests → implementation)
+- ✅ Feature 8: GET /projects/{id} (6 tests → implementation)
+- ✅ Feature 9: POST /projects (9 tests → implementation)
+- ✅ Feature 10: PUT /projects/{id} (8 tests → implementation)
+- ✅ Feature 11: DELETE /projects/{id} (5 tests → implementation)
+- ✅ Feature 12: Status Filter Query Param (already included in GET list tests)
 
 ### Specification Summary
 - **Endpoints**: 5 CRUD operations on `/api/v1/projects`
@@ -43,16 +50,16 @@ This file bridges context between agent sessions. Each agent reads this at the s
 ## What's Next
 
 ### Current Priority
-Continue with **Feature 6-9**: Implement the actual API endpoints using TDD.
+Continue with **Feature 13-17**: Error handling, custom exceptions, exception handlers.
 
 ### Recommended Session Order
 
 | Session | Features | Goal |
 |---------|----------|------|
 | ✅ 1 | 1-5 | Foundation (project, models, data store) |
-| 🔄 2 | 6-9 | Basic CRUD (GET list, GET one, POST) |
-| 3 | 10-12 | Complete CRUD (PUT, DELETE, filtering) |
-| 4 | 13-17 | Error handling |
+| ✅ 2 | 6-9 | Basic CRUD (GET list, GET one, POST) |
+| ✅ 3 | 10-12 | Complete CRUD (PUT, DELETE, filtering) |
+| 🔄 4 | 13-17 | Error handling |
 | 5 | 18-21, 30-34 | Health, docs, Docker |
 | 6 | 22-25 | Core tests |
 | 7 | 26-29 | Complete test coverage |

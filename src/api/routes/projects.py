@@ -4,8 +4,9 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException, Query, Response, status
+from fastapi import APIRouter, Query, Response, status
 
+from src.api.exceptions import NotFoundException
 from src.config import settings
 from src.models.project import ProjectCreate, ProjectStatus, ProjectUpdate
 from src.models.responses import (
@@ -67,12 +68,8 @@ def get_project(project_id: UUID) -> ProjectResponse:
     project = service.get_by_id(project_id)
 
     if project is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "error": "not_found",
-                "message": f"Project with ID '{project_id}' not found",
-            },
+        raise NotFoundException(
+            message=f"Project with ID '{project_id}' not found",
         )
 
     return ProjectResponse(data=project)
@@ -112,12 +109,8 @@ def update_project(project_id: UUID, update_data: ProjectUpdate) -> ProjectRespo
     project = service.update(project_id, update_data)
 
     if project is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "error": "not_found",
-                "message": f"Project with ID '{project_id}' not found",
-            },
+        raise NotFoundException(
+            message=f"Project with ID '{project_id}' not found",
         )
 
     return ProjectResponse(data=project)
@@ -138,12 +131,8 @@ def delete_project(project_id: UUID) -> Response:
     deleted = service.delete(project_id)
 
     if not deleted:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "error": "not_found",
-                "message": f"Project with ID '{project_id}' not found",
-            },
+        raise NotFoundException(
+            message=f"Project with ID '{project_id}' not found",
         )
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
