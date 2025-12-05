@@ -15,7 +15,7 @@ services:
     container_name: premium-site-dev
     working_dir: /app
     ports:
-      - "3000:3000"
+      - "3002:3000"
     volumes:
       # Mount source code for hot-reload
       - .:/app
