@@ -12,7 +12,7 @@
       "name": "Initialize Python Project",
       "description": "Set up Python project structure with FastAPI, Pydantic, and development dependencies",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create requirements.txt with fastapi, uvicorn, pydantic>=2.5.0",
         "Create requirements-dev.txt with pytest, pytest-cov, httpx, ruff, black",
