@@ -1,128 +1,61 @@
-# Agent Harness Framework - Constitution
+# High-End Marketing Website Constitution
 
-> This is the **template constitution**. When using this framework for a real project, update this file with your project-specific principles using `/speckit.constitution`.
-
-This document defines the core principles that govern all agent behavior.
-
-## Framework Mission
-
-Enable developers to run **long-lived autonomous agents** within VS Code GitHub Copilot through file-based state management and incremental progress patterns.
+## Vision
+To build a visually stunning, high-performance marketing website inspired by Apple’s design philosophy—clean, minimalist, and content-first—while strictly adhering to copyright laws and avoiding any trademark infringement. The site must be accessible, responsive, and built on a maintainable, component-driven architecture.
 
 ## Core Principles
+1.  **Design Integrity**: Prioritize generous whitespace, strong typography, and visual hierarchy. "Less is more."
+2.  **Performance First**: Every animation and asset must be optimized. Target high Lighthouse scores (90+).
+3.  **Strict Compliance**: Zero tolerance for copying Apple’s assets, text, logos, or product photography. Inspiration is structural/aesthetic, not literal.
+4.  **Accessibility**: WCAG 2.1 AA compliance is mandatory, not optional. Semantic HTML is the foundation.
+5.  **Maintainability**: Build a reusable design system (tokens for colors, spacing, typography) before building pages.
 
-### 1. Incremental Progress
-- One feature at a time
-- Complete before moving on
-- Commit after each success
-- Don't try to do too much
-
-### 2. File-Based Memory
-- All state lives in files
-- `feature_list.json` is the source of truth
-- Progress notes bridge sessions
-- Git history enables rollback
-
-### 3. Verify Before Claiming
-- Test features before marking complete
-- Check existing features still work
-- Quality over speed
-
-### 4. Document for Amnesia
-- Next agent has zero memory
-- Write clear progress notes
-- Explain decisions
-- Leave clean state
-
-### 5. Feature List is Sacred
-- Only change `passes` field
-- Never remove features
-- Never edit descriptions
-- Never modify steps
-
-## When Using This Template
-
-Replace this constitution with your project-specific principles:
-
-1. **Project Vision**: What are you building?
-2. **Core Principles**: What values guide decisions?
-3. **Technical Standards**: What languages, frameworks, conventions?
-4. **Libraries**: What libraries should be used? (see below)
-5. **Quality Gates**: What must pass before completion?
-6. **File Conventions**: How should files be organized?
-
-Use `/speckit.constitution` to generate a project-specific constitution.
+## Technical Standards
+- **Language**: TypeScript
+- **Framework**: Next.js (React)
+- **Styling**: Tailwind CSS (configured with design tokens)
+- **Animation**: Framer Motion
+- **Package Manager**: npm or pnpm
 
 ## Libraries
 
-> Configure your project's library preferences here. If not specified, framework defaults apply.
-> See `.github/instructions/libraries.instructions.md` for all defaults.
-
 ### Specified Libraries
-
 | Category | Library | Reason |
 |----------|---------|--------|
-| UI Testing | Playwright | (default) |
-| HTTP Client | fetch/requests | (default by language) |
-| _Add your overrides here_ | | |
+| UI Framework | Next.js | Best-in-class performance and SEO for marketing sites. |
+| Styling | Tailwind CSS | Efficient for implementing a strict design system. |
+| Animation | Framer Motion | High-fidelity animations required for "high-end" feel. |
+| Icons | Lucide React | Clean, consistent SVG icons. |
 
-### Library Resolution Order
+### Use Framework Defaults For
+- UI Testing (Playwright)
+- Validation (Zod)
+- HTTP Client (fetch)
 
-1. Libraries specified in this section (highest priority)
-2. MCP tools if available (for simple operations)
-3. Framework defaults from `libraries.instructions.md`
+## Quality Gates
+- [ ] **Lighthouse Performance**: > 90 on Desktop and Mobile.
+- [ ] **Accessibility**: No WCAG violations (axe-core/Lighthouse).
+- [ ] **Responsiveness**: Verified on Mobile, Tablet, and Desktop breakpoints.
+- [ ] **Linting**: Zero ESLint warnings/errors.
+- [ ] **Tests**: All unit and E2E tests pass.
 
-### Example Overrides
+## File Conventions
+- **Components**: `src/components/{Category}/{ComponentName}.tsx`
+- **Pages**: `src/app/{route}/page.tsx` (Next.js App Router)
+- **Tokens**: `tailwind.config.ts` for all design tokens (colors, spacing).
+- **Assets**: `public/assets/{type}/` (optimized images/videos).
 
-```markdown
-| Category | Library | Reason |
-|----------|---------|--------|
-| UI Testing | Cypress | Team already uses Cypress |
-| HTTP Client | axios | Need request interceptors |
-| API Framework | Fastify | Performance requirements |
-```
+## Testing Strategy
+- **Unit Tests**: Jest/React Testing Library for individual components and logic.
+- **E2E Tests**: Playwright for critical user journeys and visual regression testing.
+- **Visual Checks**: Manual review of animations and responsiveness.
 
-## Coding Standards
+## Documentation Requirements
+- **Design System**: Document usage of tokens and core components.
+- **Setup**: Clear instructions for running locally and building.
+- **Decisions**: ADRs (Architecture Decision Records) for major tech choices.
 
-When generating or modifying code:
-- Follow existing project conventions
-- Prefer clarity over cleverness
-- Include appropriate error handling
-- Write code that is easy to modify
-
-### When Modifying Files
-- Make minimal, focused changes
-- Preserve existing formatting
-- Document significant changes
-- Test changes when possible
-
-## Communication Standards
-
-### With Users
-- Be concise but thorough
-- Explain "why" not just "what"
-- Offer options when appropriate
-- Acknowledge limitations
-
-### Between Agents
-- Provide complete handoff context
-- Reference specific files and locations
-- State clear success criteria
-- Include rollback instructions
-
-## Boundaries
-
-### Agents Should
-- Ask for clarification when uncertain
-- Refuse clearly harmful requests
-- Suggest alternatives when blocked
-- Learn from feedback
-
-### Agents Should Not
-- Make assumptions about intent
-- Execute without a plan
-- Ignore project conventions
-- Forget to checkpoint state
-
----
-
-*This constitution may be amended as the project evolves. All agents must re-read this file when starting significant work.*
+## Non-Goals
+- **No E-commerce**: No cart, checkout, or payment processing.
+- **No Clones**: Do not replicate specific Apple layouts pixel-for-pixel.
+- **No User Accounts**: Public-facing marketing content only.

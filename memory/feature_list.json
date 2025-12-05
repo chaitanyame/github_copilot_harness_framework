@@ -1,31 +1,382 @@
 {
-  "_comment": "This is a template. Replace with your project's features using /harness.generate",
-  "_meta": {
-    "description": "Feature list tracking - source of truth for all work",
-    "version": "1.0.0",
-    "created": null,
-    "last_updated": null
-  },
-  "_rules": {
-    "allowed": "ONLY change 'passes' field from false to true when verified",
-    "forbidden": [
-      "Never remove features",
-      "Never edit descriptions",
-      "Never modify steps",
-      "Never reorder features"
-    ]
-  },
-  "_example": {
-    "id": 1,
-    "name": "Example Feature",
-    "description": "What this feature does",
-    "priority": "high",
-    "passes": false,
-    "steps": [
-      "Step 1 - Implementation action",
-      "Step 2 - Another action",
-      "Step 3 - Verify feature works"
-    ]
-  },
-  "features": []
+  "branch": "001-premium-marketing-site",
+  "specification": "specs/001-premium-marketing-site/spec.md",
+  "name": "Premium Marketing Website",
+  "description": "A visually stunning, high-performance marketing website inspired by Apple's design philosophy—clean, minimalist, and content-first—with strict copyright compliance.",
+  "version": "1.0.0",
+  "features": [
+    {
+      "id": 1,
+      "name": "Create Multi-Stage Dockerfile",
+      "description": "Create a multi-stage Dockerfile with Node.js build stage and Nginx static serve stage.",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "Create Dockerfile at project root with Node.js 20 Alpine build stage",
+        "Add Nginx Alpine stage to serve static export from out/",
+        "Verify docker build -t premium-site . completes without errors",
+        "Verify built image serves static files on port 80"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Create docker-compose.yml for Development",
+      "description": "Create docker-compose.yml for local development with hot-reload.",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "Create docker-compose.yml that mounts source code as volume",
+        "Configure npm run dev to run inside the container",
+        "Expose port 3000 for local access",
+        "Verify hot-reload works when source files change"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Create .dockerignore and .env.example",
+      "description": "Create Docker ignore file and environment variable template.",
+      "priority": "medium",
+      "passes": true,
+      "steps": [
+        "Create .dockerignore excluding node_modules, .next, out, .git",
+        "Create .env.example with placeholder variables",
+        "Verify Docker build context is optimized"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Initialize Next.js App with TypeScript & Tailwind",
+      "description": "Set up the Next.js application with all core dependencies.",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "Initialize Next.js with App Router and src/ directory",
+        "Configure TypeScript",
+        "Install and configure Tailwind CSS",
+        "Install framer-motion, lucide-react, clsx, tailwind-merge",
+        "Verify src/app/page.tsx renders and Tailwind classes work"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Configure Tailwind Design Tokens",
+      "description": "Set up the design system tokens in Tailwind config.",
+      "priority": "high",
+      "passes": true,
+      "steps": [
+        "Define neutral and accent color palettes in tailwind.config.ts",
+        "Configure fontFamily.display and fontFamily.body",
+        "Add custom spacing values for hero and section",
+        "Enable darkMode: 'class'",
+        "Verify token classes work in components"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Set Up next/font with Inter",
+      "description": "Configure self-hosted Inter font for optimal performance.",
+      "priority": "medium",
+      "passes": true,
+      "steps": [
+        "Import Inter from next/font/google in layout.tsx",
+        "Apply font variable to html tag",
+        "Reference --font-display in Tailwind config",
+        "Verify no FOUT or CLS on page load"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Create ThemeProvider Context",
+      "description": "Build React context for theme management with persistence.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create ThemeProvider component in src/components/providers/",
+        "Read initial theme from localStorage or prefers-color-scheme",
+        "Provide theme, setTheme, and toggleTheme via context",
+        "Apply .dark class to html element",
+        "Verify theme persists across page reloads without flash"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Create Header Component",
+      "description": "Build the global sticky header with navigation and theme toggle.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create Header component with sticky positioning and backdrop blur",
+        "Add logo/brand name on the left",
+        "Add navigation links (Products, Support, Contact) on the right",
+        "Integrate ThemeToggle button",
+        "Implement mobile hamburger menu with slide-out animation",
+        "Verify all nav links work and mobile menu opens/closes"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Create Footer Component",
+      "description": "Build the global footer with links and copyright.",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create Footer component with three columns of links",
+        "Add copyright notice at bottom",
+        "Add placeholder social media icons",
+        "Verify footer renders consistently on all pages"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Create Button and ThemeToggle Components",
+      "description": "Build reusable Button and ThemeToggle UI components.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create Button component with primary, secondary, ghost variants",
+        "Create ThemeToggle component with Sun/Moon icons from Lucide",
+        "Connect ThemeToggle to toggleTheme context function",
+        "Verify both components are keyboard accessible"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Wire Up Root Layout",
+      "description": "Connect all layout components in the root layout file.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Wrap children in ThemeProvider in layout.tsx",
+        "Render Header above main content",
+        "Render Footer below main content",
+        "Set global metadata (title, description)",
+        "Verify Header and Footer appear on all pages"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Implement Dark Mode CSS Variables",
+      "description": "Define CSS custom properties for light and dark themes.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Define :root CSS variables for light mode in globals.css",
+        "Define .dark CSS variables for dark mode",
+        "Update Tailwind config to use CSS variables",
+        "Verify all colors update when theme toggles"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Create Hero Component",
+      "description": "Build the full-screen hero section with animation.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create Hero component with min-h-screen layout",
+        "Add centered headline, tagline, and CTA button",
+        "Add background image with overlay",
+        "Implement fade-in animation on load",
+        "Verify text is readable over image on all screen sizes"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Create ProductHighlight Component",
+      "description": "Build the alternating product highlight section.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create ProductHighlight with image and text layout",
+        "Add reverse prop to flip layout direction",
+        "Add Learn More link to product detail page",
+        "Make layout responsive (stack on mobile)",
+        "Verify alternating layout works correctly"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Create AnimatedSection Wrapper",
+      "description": "Build Framer Motion wrapper for scroll-triggered animations.",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create AnimatedSection component using Framer Motion",
+        "Implement fade-in and slide-up on viewport entry",
+        "Add prefers-reduced-motion support to disable animations",
+        "Verify animations trigger when scrolling"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Create Product Data File",
+      "description": "Create structured product data for the site.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create Product TypeScript interface in src/types/product.ts",
+        "Create src/data/products.ts with at least 2 sample products",
+        "Include id, slug, name, tagline, description, features, specs, images",
+        "Verify data imports correctly in components"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Build Home Page",
+      "description": "Assemble the complete Home page with all sections.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Build src/app/page.tsx with Hero section",
+        "Add 2+ ProductHighlight sections mapped from product data",
+        "Wrap sections in AnimatedSection for scroll animations",
+        "Verify Learn More links navigate to product pages"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Create FeatureGrid Component",
+      "description": "Build the responsive feature grid with icons.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create FeatureGrid component with icon, title, description cards",
+        "Make grid responsive (2 cols mobile, 3-4 cols desktop)",
+        "Use Lucide icons with accessible aria-labels",
+        "Wrap in AnimatedSection for scroll animation"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Create SpecsTable Component",
+      "description": "Build the two-column technical specifications table.",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create SpecsTable component with key-value layout",
+        "Add zebra striping for readability",
+        "Use semantic table HTML with proper headers",
+        "Verify dark mode styling works"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Create ComparisonTable Component",
+      "description": "Build the multi-column product comparison table.",
+      "priority": "medium",
+      "passes": false,
+      "steps": [
+        "Create ComparisonTable with row headers and product columns",
+        "Highlight current product column",
+        "Make table horizontally scrollable on mobile",
+        "Verify accessibility with screen reader"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Build Product Detail Page",
+      "description": "Create the dynamic product detail page template.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/app/products/[slug]/page.tsx",
+        "Fetch product data by slug parameter",
+        "Render product Hero, FeatureGrid, SpecsTable, ComparisonTable",
+        "Add page-specific metadata for SEO",
+        "Verify correct data renders for each product URL"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Implement generateStaticParams",
+      "description": "Enable static generation for all product pages.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Export generateStaticParams from product page",
+        "Return all product slugs for static generation",
+        "Run npm run build and verify pages are pre-rendered",
+        "Verify build output shows all product paths"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Create Custom 404 Page",
+      "description": "Build a branded 404 error page.",
+      "priority": "low",
+      "passes": false,
+      "steps": [
+        "Create src/app/not-found.tsx with branded design",
+        "Add helpful message and link to Home",
+        "Verify invalid routes show the custom 404 page"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Create FAQ Data File",
+      "description": "Create structured FAQ data for the support page.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create FAQ TypeScript interface in src/types/faq.ts",
+        "Create src/data/faqs.ts with 5-10 sample FAQ entries",
+        "Verify data imports correctly"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Create FAQAccordion Component",
+      "description": "Build the accessible accordion component for FAQs.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create FAQAccordion component with expand/collapse functionality",
+        "Add animated open/close transitions",
+        "Implement aria-expanded and keyboard navigation",
+        "Verify accordion is fully accessible"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Build Support Page",
+      "description": "Create the Support/FAQ page.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/app/support/page.tsx with heading and intro",
+        "Render FAQAccordion with data from faqs.ts",
+        "Add link to Contact page",
+        "Verify accordion is functional"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Build Contact Page",
+      "description": "Create the Contact page with form.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Create src/app/contact/page.tsx with contact information",
+        "Add form with Name, Email, Message fields",
+        "Implement client-side validation (required, email format)",
+        "Verify form is accessible and validation works"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "Performance, Accessibility & E2E Testing",
+      "description": "Final polish, optimization, and testing.",
+      "priority": "high",
+      "passes": false,
+      "steps": [
+        "Optimize all images (WebP, sizing, blur placeholders)",
+        "Add SEO metadata (title, description, OG tags) to all pages",
+        "Run Lighthouse audit and fix issues until score > 90",
+        "Run axe-core accessibility audit and fix violations",
+        "Write Playwright E2E tests for core user journeys",
+        "Finalize Docker production build and verify static export",
+        "Verify all tests pass"
+      ]
+    }
+  ]
 }
