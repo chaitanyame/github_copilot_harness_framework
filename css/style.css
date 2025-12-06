@@ -160,6 +160,13 @@ button {
   background-clip: text;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.api-key-btn,
 .info-btn {
   font-size: var(--font-size-lg);
   padding: var(--spacing-sm);
@@ -167,8 +174,95 @@ button {
   transition: background-color var(--transition-fast);
 }
 
+.api-key-btn:hover,
 .info-btn:hover {
   background-color: var(--color-surface-light);
+}
+
+.api-key-btn.configured {
+  color: var(--color-success);
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-lg);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  max-width: 400px;
+  width: 100%;
+}
+
+.api-key-modal-content h2 {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text);
+}
+
+.api-key-modal-content p {
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.api-key-modal-content input {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-surface-light);
+  border: 1px solid var(--color-surface-light);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-md);
+}
+
+.api-key-modal-content input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: flex-end;
+}
+
+.modal-actions .primary {
+  background: var(--color-primary);
+}
+
+.modal-actions .secondary {
+  background: var(--color-surface-light);
+}
+
+.api-status {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.api-status.success {
+  color: var(--color-success);
+}
+
+.api-status.error {
+  color: var(--color-error);
 }
 
 /* App Main */

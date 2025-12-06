@@ -31,6 +31,7 @@ function init() {
   setupEventListeners();
   renderTemplates();
   loadHistory();
+  loadSavedApiKey();
   
   // Subscribe to store changes
   Store.subscribe(handleStateChange);
@@ -64,7 +65,15 @@ function cacheElements() {
     // History
     historyPanel: document.getElementById('history-panel'),
     historyGrid: document.querySelector('.history-grid'),
-    closeHistoryBtn: document.getElementById('close-history-btn')
+    closeHistoryBtn: document.getElementById('close-history-btn'),
+    
+    // API Key Modal
+    apiKeyBtn: document.getElementById('api-key-btn'),
+    apiKeyModal: document.getElementById('api-key-modal'),
+    apiKeyInput: document.getElementById('api-key-input'),
+    saveApiKeyBtn: document.getElementById('save-api-key-btn'),
+    closeApiModalBtn: document.getElementById('close-api-modal-btn'),
+    apiStatus: document.getElementById('api-status')
   };
 }
 
@@ -91,6 +100,12 @@ function setupEventListeners() {
   elements.resetBtn?.addEventListener('click', handleReset);
   elements.historyBtn?.addEventListener('click', toggleHistoryPanel);
   elements.closeHistoryBtn?.addEventListener('click', toggleHistoryPanel);
+  
+  // API Key Modal
+  elements.apiKeyBtn?.addEventListener('click', openApiKeyModal);
+  elements.saveApiKeyBtn?.addEventListener('click', saveApiKey);
+  elements.closeApiModalBtn?.addEventListener('click', closeApiKeyModal);
+  elements.apiKeyModal?.addEventListener('click', handleModalBackdropClick);
   
   // Initialize canvas
   if (elements.canvas) {
@@ -665,6 +680,125 @@ function toggleHistoryPanel() {
   const panel = elements.historyPanel;
   if (panel) {
     panel.hidden = !panel.hidden;
+  }
+}
+
+/**
+ * Open API Key Modal
+ */
+function openApiKeyModal() {
+  if (elements.apiKeyModal) {
+    elements.apiKeyModal.classList.remove('hidden');
+    elements.apiKeyInput?.focus();
+    
+    // Show current status
+    updateApiStatus();
+  }
+}
+
+/**
+ * Close API Key Modal
+ */
+function closeApiKeyModal() {
+  if (elements.apiKeyModal) {
+    elements.apiKeyModal.classList.add('hidden');
+    if (elements.apiKeyInput) {
+      elements.apiKeyInput.value = '';
+    }
+  }
+}
+
+/**
+ * Handle modal backdrop click
+ */
+function handleModalBackdropClick(e) {
+  if (e.target === elements.apiKeyModal) {
+    closeApiKeyModal();
+  }
+}
+
+/**
+ * Save API Key
+ */
+function saveApiKey() {
+  const key = elements.apiKeyInput?.value?.trim();
+  
+  if (!key) {
+    showApiStatus('Please enter an API key', 'error');
+    return;
+  }
+  
+  // Save to Processor
+  Processor.setApiKey(key);
+  
+  // Also save to localStorage for persistence
+  try {
+    localStorage.setItem('gemini_nano_banana_api_key', key);
+  } catch (e) {
+    console.warn('Could not save API key to localStorage:', e);
+  }
+  
+  // Update button state
+  updateApiKeyButtonState();
+  
+  showApiStatus('API key saved successfully!', 'success');
+  showToast('API key configured!', 'success');
+  
+  // Close modal after delay
+  setTimeout(() => {
+    closeApiKeyModal();
+  }, 1500);
+}
+
+/**
+ * Update API status message
+ */
+function updateApiStatus() {
+  if (Processor.isApiConfigured()) {
+    showApiStatus('✅ API key is configured', 'success');
+  } else {
+    showApiStatus('No API key configured', '');
+  }
+}
+
+/**
+ * Show API status message
+ */
+function showApiStatus(message, type) {
+  if (elements.apiStatus) {
+    elements.apiStatus.textContent = message;
+    elements.apiStatus.className = `api-status ${type}`;
+  }
+}
+
+/**
+ * Update API key button state
+ */
+function updateApiKeyButtonState() {
+  if (elements.apiKeyBtn) {
+    if (Processor.isApiConfigured()) {
+      elements.apiKeyBtn.classList.add('configured');
+      elements.apiKeyBtn.title = 'API Key Configured';
+    } else {
+      elements.apiKeyBtn.classList.remove('configured');
+      elements.apiKeyBtn.title = 'Configure API Key';
+    }
+  }
+}
+
+/**
+ * Load saved API key from localStorage
+ */
+function loadSavedApiKey() {
+  try {
+    const savedKey = localStorage.getItem('gemini_nano_banana_api_key');
+    if (savedKey) {
+      Processor.setApiKey(savedKey);
+      updateApiKeyButtonState();
+      console.log('Loaded saved API key');
+    }
+  } catch (e) {
+    console.warn('Could not load saved API key:', e);
   }
 }
 

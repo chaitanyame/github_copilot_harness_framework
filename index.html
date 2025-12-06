@@ -10,8 +10,25 @@
 <body>
   <header class="app-header" data-testid="app-header">
     <h1 data-testid="app-title">Selfie PullAI</h1>
-    <button class="info-btn" aria-label="About this app" data-testid="info-btn">ℹ️</button>
+    <div class="header-actions">
+      <button id="api-key-btn" class="api-key-btn" aria-label="Configure API Key" data-testid="api-key-btn">🔑</button>
+      <button class="info-btn" aria-label="About this app" data-testid="info-btn">ℹ️</button>
+    </div>
   </header>
+
+  <!-- API Key Modal -->
+  <div id="api-key-modal" class="modal hidden" data-testid="api-key-modal">
+    <div class="modal-content api-key-modal-content">
+      <h2>Configure API Key</h2>
+      <p>Enter your Gemini Nano Banana API key to enable AI-powered selfie generation.</p>
+      <input type="password" id="api-key-input" placeholder="Enter your API key" data-testid="api-key-input">
+      <div class="modal-actions">
+        <button id="save-api-key-btn" class="action-btn primary" data-testid="save-api-key-btn">Save Key</button>
+        <button id="close-api-modal-btn" class="action-btn secondary" data-testid="close-api-modal-btn">Cancel</button>
+      </div>
+      <p class="api-status" id="api-status" data-testid="api-status"></p>
+    </div>
+  </div>
 
   <main class="app-main" data-testid="app-main">
     <!-- Section 1: Template Carousel -->

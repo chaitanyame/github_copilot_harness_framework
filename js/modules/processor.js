@@ -7,6 +7,30 @@
  * 3. Calling Gemini Nano Banana API to generate composite selfie
  */
 
+// API Configuration
+const API_CONFIG = {
+  // Gemini Nano Banana API key - set via setApiKey() or environment
+  apiKey: null,
+  baseUrl: 'https://api.gemini-nano-banana.dev/v1',
+  model: 'imagen-3.0-generate-002'
+};
+
+/**
+ * Set the Gemini Nano Banana API key
+ * @param {string} key - Your API key
+ */
+function setApiKey(key) {
+  API_CONFIG.apiKey = key;
+  console.log('Gemini Nano Banana API key configured');
+}
+
+/**
+ * Check if API is configured
+ */
+function isApiConfigured() {
+  return API_CONFIG.apiKey !== null && API_CONFIG.apiKey.length > 0;
+}
+
 // Check if Gemini Nano Banana Image API is available
 const isGeminiAvailable = typeof window !== 'undefined' && 
   (window.GeminiNanoBanana || window.ai?.createImageSession);
@@ -20,7 +44,16 @@ const isGeminiAvailable = typeof window !== 'undefined' &&
 async function generateSelfiePull(userImageData, template) {
   console.log('Generating selfie with:', template.celebrity, 'in', template.scene);
   
-  // Check for Gemini Nano Banana API
+  // Try API key-based generation first
+  if (isApiConfigured()) {
+    try {
+      return await generateWithApiKey(userImageData, template);
+    } catch (error) {
+      console.warn('API key generation failed, trying fallback:', error);
+    }
+  }
+  
+  // Check for browser-based Gemini Nano Banana API
   if (isGeminiAvailable) {
     try {
       return await generateWithGemini(userImageData, template);
@@ -32,6 +65,60 @@ async function generateSelfiePull(userImageData, template) {
   
   // Fallback: show placeholder message
   return fallbackGenerate(userImageData, template);
+}
+
+/**
+ * Generate using API key (REST API)
+ */
+async function generateWithApiKey(userImageData, template) {
+  console.log('Generating with Gemini Nano Banana API key...');
+  
+  // Extract base64 data from data URL
+  const base64Image = userImageData.split(',')[1];
+  
+  // Build the generation prompt
+  const prompt = `Generate a realistic selfie photo: ${template.prompt}. 
+    Use the provided face image as reference for the person taking the selfie.
+    Make it look natural and photorealistic.`;
+  
+  const response = await fetch(`${API_CONFIG.baseUrl}/images/generate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${API_CONFIG.apiKey}`,
+      'X-API-Key': API_CONFIG.apiKey
+    },
+    body: JSON.stringify({
+      model: API_CONFIG.model,
+      prompt: prompt,
+      reference_image: base64Image,
+      reference_type: 'face',
+      output_format: 'base64',
+      size: '1024x1024',
+      style: 'photorealistic',
+      num_images: 1
+    })
+  });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API error ${response.status}: ${errorText}`);
+  }
+  
+  const result = await response.json();
+  
+  // Return the generated image as data URL
+  if (result.images && result.images[0]) {
+    return `data:image/png;base64,${result.images[0]}`;
+  }
+  if (result.image) {
+    return `data:image/png;base64,${result.image}`;
+  }
+  if (result.data) {
+    return `data:image/png;base64,${result.data}`;
+  }
+  
+  throw new Error('No image in API response');
 }
 
 /**
@@ -197,7 +284,7 @@ function getSceneColors(scene) {
  * Check if AI processing is available
  */
 function isAIAvailable() {
-  return isGeminiAvailable;
+  return isGeminiAvailable || isApiConfigured();
 }
 
 /**
@@ -205,15 +292,18 @@ function isAIAvailable() {
  */
 function getCapabilities() {
   return {
-    aiProcessing: isGeminiAvailable,
+    aiProcessing: isGeminiAvailable || isApiConfigured(),
     selfieGeneration: true,
-    sceneComposition: isGeminiAvailable
+    sceneComposition: isGeminiAvailable || isApiConfigured(),
+    apiKeyConfigured: isApiConfigured()
   };
 }
 
 // Export Processor API
 export const Processor = {
   generateSelfiePull,
+  setApiKey,
+  isApiConfigured,
   isAIAvailable,
   getCapabilities
 };
