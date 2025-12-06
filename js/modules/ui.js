@@ -136,7 +136,7 @@ function handleStateChange(event, data, state) {
 }
 
 /**
- * Render template carousel - Scene-based templates
+ * Render template carousel - Scene-based templates with actual images
  */
 function renderTemplates() {
   const templates = Store.getTemplates();
@@ -150,7 +150,9 @@ function renderTemplates() {
          tabindex="0" 
          role="button"
          aria-label="Select ${template.name} with ${template.celebrity}">
-      <div class="scene-preview" style="background: linear-gradient(135deg, ${getSceneGradient(template.scene)})">
+      <div class="scene-preview">
+        <img src="${template.templateImage}" alt="${template.name}" loading="lazy" onerror="this.style.display='none'">
+        <div class="scene-overlay"></div>
         <span class="scene-tag">${template.scene}</span>
         <span class="celebrity-overlay">📸 ${template.celebrity}</span>
       </div>

@@ -69,17 +69,47 @@ async function generateSelfiePull(userImageData, template) {
 
 /**
  * Generate using API key (REST API)
+ * Sends both template image and user's face to NanoBanana API
  */
 async function generateWithApiKey(userImageData, template) {
   console.log('Generating with Gemini Nano Banana API key...');
   
-  // Extract base64 data from data URL
-  const base64Image = userImageData.split(',')[1];
+  // Extract base64 data from user image data URL
+  const userBase64 = userImageData.split(',')[1];
+  
+  // Load and convert template image to base64
+  let templateBase64 = null;
+  if (template.templateImage) {
+    try {
+      templateBase64 = await loadImageAsBase64(template.templateImage);
+      console.log('Template image loaded successfully');
+    } catch (err) {
+      console.warn('Could not load template image:', err);
+    }
+  }
   
   // Build the generation prompt
-  const prompt = `Generate a realistic selfie photo: ${template.prompt}. 
-    Use the provided face image as reference for the person taking the selfie.
-    Make it look natural and photorealistic.`;
+  const prompt = `${template.prompt}. 
+    Replace the person in the reference image with the face from the uploaded image.
+    Keep the celebrity and scene exactly as shown.
+    Make it look natural and ultra-realistic.`;
+  
+  const requestBody = {
+    model: API_CONFIG.model,
+    prompt: prompt,
+    user_image: userBase64,
+    user_image_type: 'face',
+    output_format: 'base64',
+    size: '1024x1024',
+    style: 'photorealistic',
+    num_images: 1
+  };
+  
+  // Add template image if available
+  if (templateBase64) {
+    requestBody.reference_image = templateBase64;
+    requestBody.reference_type = 'template';
+  }
   
   const response = await fetch(`${API_CONFIG.baseUrl}/images/generate`, {
     method: 'POST',
@@ -88,16 +118,7 @@ async function generateWithApiKey(userImageData, template) {
       'Authorization': `Bearer ${API_CONFIG.apiKey}`,
       'X-API-Key': API_CONFIG.apiKey
     },
-    body: JSON.stringify({
-      model: API_CONFIG.model,
-      prompt: prompt,
-      reference_image: base64Image,
-      reference_type: 'face',
-      output_format: 'base64',
-      size: '1024x1024',
-      style: 'photorealistic',
-      num_images: 1
-    })
+    body: JSON.stringify(requestBody)
   });
   
   if (!response.ok) {
@@ -119,6 +140,36 @@ async function generateWithApiKey(userImageData, template) {
   }
   
   throw new Error('No image in API response');
+}
+
+/**
+ * Load an image from URL and convert to base64
+ */
+async function loadImageAsBase64(imageUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      
+      // Get base64 (remove the data URL prefix)
+      const dataUrl = canvas.toDataURL('image/png');
+      const base64 = dataUrl.split(',')[1];
+      resolve(base64);
+    };
+    
+    img.onerror = () => {
+      reject(new Error(`Failed to load image: ${imageUrl}`));
+    };
+    
+    img.src = imageUrl;
+  });
 }
 
 /**
