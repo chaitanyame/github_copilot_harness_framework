@@ -52,8 +52,17 @@ function cacheElements() {
     fileInput: document.getElementById('file-input'),
     cameraBtn: document.getElementById('camera-btn'),
     
+    // Preview Section
+    previewSection: document.getElementById('preview-section'),
+    templatePreviewImg: document.getElementById('template-preview-img'),
+    templatePreviewName: document.getElementById('template-preview-name'),
+    userPreviewImg: document.getElementById('user-preview-img'),
+    resultPlaceholder: document.getElementById('result-placeholder'),
+    generateBtn: document.getElementById('generate-btn'),
+    
     // Canvas
     canvas: document.getElementById('preview-canvas'),
+    editorSection: document.getElementById('editor'),
     controlsContainer: document.querySelector('.controls'),
     
     // Actions
@@ -93,6 +102,9 @@ function setupEventListeners() {
   
   // Camera
   elements.cameraBtn?.addEventListener('click', handleCameraClick);
+  
+  // Generate button
+  elements.generateBtn?.addEventListener('click', handleGenerate);
   
   // Actions
   elements.downloadBtn?.addEventListener('click', handleDownload);
@@ -344,8 +356,11 @@ function handleUploadKeydown(e) {
   }
 }
 
+// Store user's uploaded image temporarily
+let pendingUserImage = null;
+
 /**
- * Process uploaded file and generate selfie
+ * Process uploaded file - show preview, don't generate yet
  */
 async function processFile(file) {
   // Validate file type
@@ -369,24 +384,119 @@ async function processFile(file) {
     return;
   }
   
-  Store.setProcessing(true);
-  showToast(`Generating selfie with ${template.celebrity}...`, 'info');
-  
   try {
     // Read file as data URL
     const userImageData = await readFileAsDataURL(file);
     
-    // Generate selfie using Gemini Nano Banana API (or fallback)
-    const generatedSelfie = await Processor.generateSelfiePull(userImageData, template);
+    // Store for later generation
+    pendingUserImage = userImageData;
+    
+    // Show the preview section with side-by-side images
+    showPreviewSection(template, userImageData);
+    
+    showToast('Ready to generate! Click the Generate button.', 'success');
+  } catch (error) {
+    console.error('Error loading image:', error);
+    showToast('Failed to load image', 'error');
+  }
+}
+
+/**
+ * Show the preview section with template and user images
+ */
+function showPreviewSection(template, userImageData) {
+  // Hide editor section
+  elements.editorSection?.classList.add('hidden');
+  
+  // Show preview section
+  elements.previewSection?.classList.remove('hidden');
+  
+  // Set template preview
+  if (elements.templatePreviewImg) {
+    elements.templatePreviewImg.src = template.templateImage;
+    elements.templatePreviewImg.alt = template.name;
+  }
+  if (elements.templatePreviewName) {
+    elements.templatePreviewName.textContent = template.celebrity;
+  }
+  
+  // Set user image preview
+  if (elements.userPreviewImg) {
+    elements.userPreviewImg.src = userImageData;
+  }
+  
+  // Reset result placeholder
+  if (elements.resultPlaceholder) {
+    elements.resultPlaceholder.innerHTML = '<span>🎬</span><p>Click Generate!</p>';
+  }
+  
+  // Enable generate button
+  if (elements.generateBtn) {
+    elements.generateBtn.disabled = false;
+  }
+}
+
+/**
+ * Handle Generate button click - call Gemini API
+ */
+async function handleGenerate() {
+  const template = Store.getSelectedTemplate();
+  if (!template || !pendingUserImage) {
+    showToast('Please select a template and upload a photo first', 'warning');
+    return;
+  }
+  
+  // Check API key
+  if (!Processor.isApiConfigured()) {
+    showToast('Please configure your Gemini API key first (click 🔑)', 'warning');
+    openApiKeyModal();
+    return;
+  }
+  
+  Store.setProcessing(true);
+  
+  // Update UI to show loading
+  if (elements.generateBtn) {
+    elements.generateBtn.disabled = true;
+    elements.generateBtn.classList.add('loading');
+  }
+  if (elements.resultPlaceholder) {
+    elements.resultPlaceholder.innerHTML = '<span>⏳</span><p>Generating...</p>';
+  }
+  
+  showToast(`Generating selfie with ${template.celebrity}...`, 'info');
+  
+  try {
+    // Generate selfie using Gemini API
+    const generatedSelfie = await Processor.generateSelfiePull(pendingUserImage, template);
     
     // Update store with generated image
     Store.setUserImage(generatedSelfie);
+    
+    // Hide preview, show editor with result
+    elements.previewSection?.classList.add('hidden');
+    elements.editorSection?.classList.remove('hidden');
+    
     showToast(`Selfie with ${template.celebrity} created!`, 'success');
+    
+    // Clear pending image
+    pendingUserImage = null;
   } catch (error) {
     console.error('Error generating selfie:', error);
-    showToast('Failed to generate selfie', 'error');
+    showToast('Failed to generate selfie: ' + error.message, 'error');
+    
+    // Reset button
+    if (elements.generateBtn) {
+      elements.generateBtn.disabled = false;
+    }
+    if (elements.resultPlaceholder) {
+      elements.resultPlaceholder.innerHTML = '<span>❌</span><p>Failed. Try again!</p>';
+    }
   } finally {
     Store.setProcessing(false);
+    if (elements.generateBtn) {
+      elements.generateBtn.classList.remove('loading');
+    }
   }
 }
 
@@ -595,6 +705,17 @@ async function handleShare() {
 function handleReset() {
   Store.resetState();
   renderControls();
+  
+  // Reset preview section
+  pendingUserImage = null;
+  elements.previewSection?.classList.add('hidden');
+  elements.editorSection?.classList.add('hidden');
+  
+  // Reset file input
+  if (elements.fileInput) {
+    elements.fileInput.value = '';
+  }
+  
   showToast('Reset complete', 'success');
 }
 

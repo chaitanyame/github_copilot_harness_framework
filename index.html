@@ -19,9 +19,9 @@
   <!-- API Key Modal -->
   <div id="api-key-modal" class="modal hidden" data-testid="api-key-modal">
     <div class="modal-content api-key-modal-content">
-      <h2>Configure API Key</h2>
-      <p>Enter your Gemini Nano Banana API key to enable AI-powered selfie generation.</p>
-      <input type="password" id="api-key-input" placeholder="Enter your API key" data-testid="api-key-input">
+      <h2>Configure Gemini API Key</h2>
+      <p>Enter your Google Gemini API key to enable AI-powered selfie generation. Get your key from <a href="https://aistudio.google.com/apikey" target="_blank" style="color: var(--color-primary);">Google AI Studio</a>.</p>
+      <input type="password" id="api-key-input" placeholder="Enter your Gemini API key" data-testid="api-key-input">
       <div class="modal-actions">
         <button id="save-api-key-btn" class="action-btn primary" data-testid="save-api-key-btn">Save Key</button>
         <button id="close-api-modal-btn" class="action-btn secondary" data-testid="close-api-modal-btn">Cancel</button>
@@ -51,11 +51,40 @@
       </div>
     </section>
 
-    <!-- Section 3: Editor Panel -->
-    <section id="editor" class="section-editor" aria-labelledby="editor-heading" data-testid="editor-section">
-      <h2 id="editor-heading" class="visually-hidden">Image Editor</h2>
+    <!-- Section 3: Preview & Generate -->
+    <section id="preview-section" class="section-preview hidden" aria-labelledby="preview-heading" data-testid="preview-section">
+      <h2 id="preview-heading">Ready to Generate</h2>
+      <div class="preview-container" data-testid="preview-container">
+        <div class="preview-card template-preview" data-testid="template-preview">
+          <h3>Template</h3>
+          <img id="template-preview-img" src="" alt="Selected template" data-testid="template-preview-img">
+          <p id="template-preview-name" class="preview-label" data-testid="template-preview-name"></p>
+        </div>
+        <div class="preview-plus">+</div>
+        <div class="preview-card user-preview" data-testid="user-preview">
+          <h3>Your Photo</h3>
+          <img id="user-preview-img" src="" alt="Your uploaded photo" data-testid="user-preview-img">
+          <p class="preview-label">Your Face</p>
+        </div>
+        <div class="preview-equals">=</div>
+        <div class="preview-card result-preview" data-testid="result-preview">
+          <h3>✨ Magic!</h3>
+          <div class="result-placeholder" id="result-placeholder" data-testid="result-placeholder">
+            <span>🎬</span>
+            <p>Click Generate!</p>
+          </div>
+        </div>
+      </div>
+      <button id="generate-btn" class="generate-btn" data-testid="generate-btn">
+        ✨ Generate Selfie with AI
+      </button>
+    </section>
+
+    <!-- Section 4: Editor Panel (Result) -->
+    <section id="editor" class="section-editor hidden" aria-labelledby="editor-heading" data-testid="editor-section">
+      <h2 id="editor-heading">Your AI Selfie</h2>
       <div class="canvas-container" data-testid="canvas-container">
-        <canvas id="preview-canvas" aria-label="Image preview canvas" data-testid="preview-canvas"></canvas>
+        <canvas id="preview-canvas" aria-label="Generated selfie" data-testid="preview-canvas"></canvas>
       </div>
       <div class="controls" data-testid="editor-controls">
         <!-- Controls will be added in a later feature -->
