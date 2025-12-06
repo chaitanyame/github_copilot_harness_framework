@@ -1,26 +1,42 @@
 {
   "name": "selfie-pullai",
   "version": "1.0.0",
-  "description": "A template repository for building **long-lived autonomous agents** within VS Code GitHub Copilot, based on [Anthropic's \"Effective Harnesses for Long-Running Agents\"](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).",
-  "main": "index.js",
+  "description": "Create fun AI-generated selfies with your favorite celebrities using Google Gemini API",
+  "main": "js/app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx http-server -p 3000 -c-1",
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:headed": "npx playwright test --headed"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chaitanyame/github_copilot_harness_framework.git"
+    "url": "git+https://github.com/chaitanyame/selfie-pullai.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "selfie",
+    "celebrity",
+    "ai",
+    "gemini",
+    "image-generation",
+    "photo",
+    "javascript",
+    "vanilla-js",
+    "open-source"
+  ],
+  "author": "Selfie PullAI Contributors",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chaitanyame/github_copilot_harness_framework/issues"
+    "url": "https://github.com/chaitanyame/selfie-pullai/issues"
   },
-  "homepage": "https://github.com/chaitanyame/github_copilot_harness_framework#readme",
+  "homepage": "https://github.com/chaitanyame/selfie-pullai#readme",
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "serve": "^14.2.5",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

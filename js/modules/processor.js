@@ -11,7 +11,7 @@
 const API_CONFIG = {
   apiKey: null,
   baseUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
-  model: 'gemini-2.5-flash-preview-05-20' // Use latest flash model for image gen
+  model: 'gemini-2.0-flash-exp' // Gemini 2.0 Flash with native image generation
 };
 
 /**
@@ -117,8 +117,7 @@ Make it look natural and photorealistic, like a real selfie photo.`;
       parts: parts
     }],
     generationConfig: {
-      responseModalities: ["image", "text"],
-      responseMimeType: "image/png"
+      responseModalities: ["TEXT", "IMAGE"]
     }
   };
   

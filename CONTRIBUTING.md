@@ -1,6 +1,6 @@
-# Contributing to Agent Harness Framework
+# Contributing to Selfie PullAI
 
-First off, thank you for considering contributing to the Agent Harness Framework! 🎉
+First off, thank you for considering contributing to Selfie PullAI! 🎉
 
 This document provides guidelines and instructions for contributing to this project.
 
@@ -22,22 +22,22 @@ This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participatin
 
 ### Prerequisites
 
-- VS Code with GitHub Copilot extension
+- Modern web browser (Chrome, Firefox, Safari, Edge)
 - Git
-- Node.js 18+ (for MCP servers)
-- Basic understanding of AI agents and prompt engineering
+- Node.js 18+ (for running tests)
+- A Google Gemini API key (for testing AI features)
 
 ### Fork and Clone
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/agent-harness-framework.git
-   cd agent-harness-framework
+   git clone https://github.com/YOUR_USERNAME/selfie-pullai.git
+   cd selfie-pullai
    ```
 3. Add the upstream remote:
    ```bash
-   git remote add upstream https://github.com/chaitanyame/github_copilot_harness_framework.git
+   git remote add upstream https://github.com/chaitanyame/selfie-pullai.git
    ```
 
 ## How to Contribute

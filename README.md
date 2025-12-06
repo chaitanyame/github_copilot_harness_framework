@@ -1,250 +1,224 @@
-# Agent Harness Framework
+# 📸 Selfie PullAI
 
-A template repository for building **long-lived autonomous agents** within VS Code GitHub Copilot, based on [Anthropic's "Effective Harnesses for Long-Running Agents"](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).
+<p align="center">
+  <strong>Create fun AI-generated selfies with your favorite celebrities!</strong>
+</p>
 
-## The Problem
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#demo">Demo</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#api-setup">API Setup</a> •
+  <a href="#contributing">Contributing</a> •
+  <a href="#license">License</a>
+</p>
 
-AI agents face a fundamental challenge: **each new context window starts with no memory**. Without proper scaffolding:
-- Agents try to do too much at once
-- They declare victory prematurely  
-- Work gets left in broken states
-- Time is wasted re-discovering context
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome">
+  <img src="https://img.shields.io/badge/Made%20with-❤️-red.svg" alt="Made with Love">
+  <img src="https://img.shields.io/badge/Powered%20by-Gemini%20AI-4285F4.svg" alt="Powered by Gemini">
+</p>
 
-## The Solution
+---
 
-This framework provides file-based artifacts that bridge context between sessions:
+## ✨ Features
 
-| Artifact | Purpose |
-|----------|---------|
-| `memory/feature_list.json` | Source of truth - all features with pass/fail tracking |
-| `memory/claude-progress.md` | Session notes - what happened, what's next |
-| `init.sh` / `init.ps1` | Environment setup script |
-| Git history | Incremental progress with rollback capability |
+- 🎭 **Celebrity Templates** - Choose from various celebrity scene templates
+- 📱 **Mobile-First Design** - Works seamlessly on all devices
+- 📷 **Camera Capture** - Take photos directly in the app
+- 🤖 **AI-Powered Generation** - Uses Google Gemini API for realistic composites
+- 💾 **Local History** - Your creations are saved locally (IndexedDB)
+- 🔒 **Privacy-First** - All processing happens client-side, no server storage
+- ⚡ **Zero Dependencies** - Pure vanilla JavaScript (~60KB bundle)
+- ♿ **Accessible** - WCAG 2.1 AA compliant
 
-## Quick Start
+## 🎬 How It Works
 
-### 1. Use as Template
+1. **Select a celebrity template** - Browse the carousel of celebrity scenes
+2. **Upload your photo** - Drag & drop, click to upload, or use your camera
+3. **Preview side-by-side** - See your photo next to the template
+4. **Generate with AI** - Click "Generate" to create your AI selfie!
+5. **Download & Share** - Save your creation or share with friends
 
-Click "Use this template" on GitHub, or clone directly:
+## 🚀 Quick Start
+
+### Option 1: Use Directly (No Build Required!)
 
 ```bash
-git clone https://github.com/anthropics/agent-harness-framework.git my-project
-cd my-project
+# Clone the repository
+git clone https://github.com/chaitanyame/selfie-pullai.git
+cd selfie-pullai
+
+# Start a local server
+npx http-server -p 3000
+
+# Open in browser
+open http://localhost:3000
 ```
 
-### 2. Initialize Your Project
+### Option 2: Development Setup
 
-In VS Code with GitHub Copilot, invoke the Initializer agent:
+```bash
+# Clone and install
+git clone https://github.com/chaitanyame/selfie-pullai.git
+cd selfie-pullai
+npm install
 
-```
-@Initializer Set up a [describe your project]
-```
+# Run tests
+npm test
 
-The Initializer will:
-- Create `memory/feature_list.json` with all features
-- Set up project structure
-- Create `init.sh` for environment setup
-- Make the initial git commit
-
-### 3. Implement Features
-
-Use the Coder agent for subsequent sessions:
-
-```
-@Coder Continue implementing features
+# Start development server
+npm start
 ```
 
-The Coder will:
-- Read progress notes to get context
-- Pick one feature to implement
-- Test and verify
-- Commit and update progress
+## 🔑 API Setup
 
-## Two-Agent Pattern
+This app uses the **Google Gemini API** for AI image generation.
 
-### Initializer (Session 1)
+### Get Your API Key
 
-Sets up the foundation for all future work:
-- Creates comprehensive feature list
-- Establishes project structure
-- Documents everything for future agents
+1. Go to [Google AI Studio](https://aistudio.google.com/apikey)
+2. Create a new API key
+3. Click the 🔑 button in the app header
+4. Paste your API key and save
 
-### Coder (Sessions 2+)
+> **Note:** Your API key is stored locally in your browser's localStorage and is never sent to any server other than Google's API.
 
-Makes incremental progress:
-- Reads previous session notes
-- Implements ONE feature at a time
-- Tests before marking complete
-- Leaves clean state for next session
+### Supported Models
 
-## Directory Structure
+The app uses `gemini-2.0-flash-exp` which supports native image generation.
+
+## 📁 Project Structure
 
 ```
-├── .github/
-│   ├── agents/           # Agent definitions
-│   │   ├── initializer.agent.md
-│   │   ├── coder.agent.md
-│   │   ├── planner.agent.md
-│   │   ├── researcher.agent.md
-│   │   ├── reviewer.agent.md
-│   │   └── orchestrator.agent.md
-│   ├── prompts/          # Reusable prompt commands
-│   ├── instructions/     # Context-specific instructions
-│   └── copilot-instructions.md
-├── .vscode/
-│   ├── mcp.json          # MCP server configuration
-│   └── settings.json     # VS Code settings
-├── memory/
-│   ├── constitution.md   # Project principles
-│   ├── feature_list.json # Source of truth
-│   ├── claude-progress.md # Session notes
-│   ├── state/            # Agent checkpoints
-│   ├── context/          # Persisted knowledge
-│   └── sessions/         # Session logs
-├── templates/            # Templates for new agents/prompts
-├── AGENTS.md             # Cross-agent instructions
-├── init.sh               # Setup script (Unix)
-├── init.ps1              # Setup script (Windows)
-└── README.md
+selfie-pullai/
+├── index.html              # Main HTML file
+├── css/
+│   └── style.css           # All styles (~15KB)
+├── js/
+│   ├── app.js              # Entry point
+│   └── modules/
+│       ├── store.js        # State management & templates
+│       ├── ui.js           # DOM interactions
+│       ├── canvas.js       # Canvas rendering
+│       ├── processor.js    # Gemini API integration
+│       └── db.js           # IndexedDB history
+├── assets/
+│   └── templates/          # Celebrity template images
+├── tests/                  # Playwright tests (132 tests)
+└── package.json
 ```
 
-## Critical Rules
+## 🧪 Testing
 
-### Feature List is Sacred
+The project includes comprehensive Playwright tests:
 
-`memory/feature_list.json` is the single source of truth:
-- ✅ Change `"passes": false` → `"passes": true` when verified
-- ❌ NEVER remove features
-- ❌ NEVER edit descriptions  
-- ❌ NEVER modify steps
-- ❌ NEVER reorder features
+```bash
+# Run all tests (132 tests)
+npm test
 
-### One Feature at a Time
+# Run with UI
+npx playwright test --ui
 
-Each session should focus on ONE feature:
-1. Pick highest priority with `passes: false`
-2. Implement completely
-3. Test and verify
-4. Commit and document
+# Run specific test file
+npx playwright test tests/canvas.spec.ts
 
-### Leave Clean State
-
-Before ending any session:
-- All work committed
-- Progress notes updated
-- No broken features
-- Ready for next agent
-
-## Available Agents
-
-| Agent | Purpose | Use When |
-|-------|---------|----------|
-| `@Initializer` | First session setup | Starting new project |
-| `@Coder` | Feature implementation | Continuing development |
-| `@Planner` | Task breakdown | Complex planning needed |
-| `@Researcher` | Context gathering | Need to understand codebase |
-| `@Reviewer` | Quality assurance | Review completed work |
-| `@Orchestrator` | Multi-agent coordination | Complex multi-step workflows |
-
-## Workflows
-
-### Spec-Driven Development (Recommended)
-
-Use this workflow for new projects or features:
-
-```
-/speckit.constitution  →  Define project principles
-       ↓
-/speckit.specify      →  Create feature specifications
-       ↓
-/speckit.plan         →  Create implementation plan
-       ↓
-/speckit.tasks        →  Generate detailed task list
-       ↓
-/harness.generate     →  Convert to feature_list.json
-       ↓
-@Coder                →  Implement incrementally
+# Run with coverage report
+npx playwright test --reporter=html
 ```
 
-### Quick Start Workflow
+## 🤝 Contributing
 
-Use this for simpler projects:
+We love contributions! Here's how you can help:
+
+### Quick Contribution Guide
+
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
+3. **Make** your changes
+4. **Test** your changes: `npm test`
+5. **Commit**: `git commit -m 'Add amazing feature'`
+6. **Push**: `git push origin feature/amazing-feature`
+7. **Open** a Pull Request
+
+### Development Guidelines
+
+- ✅ **No external dependencies** - Keep it vanilla JS
+- ✅ **Mobile-first** - Test on mobile devices
+- ✅ **Accessibility** - Maintain WCAG 2.1 AA compliance
+- ✅ **Tests required** - All features need Playwright tests
+- ✅ **Bundle size** - Keep under 150KB total
+
+### Areas for Contribution
+
+- 🎨 New celebrity templates
+- 🌍 Internationalization (i18n)
+- 🎭 New scene types
+- 📱 PWA support
+- 🧪 More test coverage
+- 📖 Documentation improvements
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+## 📋 Roadmap
+
+- [ ] More celebrity templates
+- [ ] Custom template upload
+- [ ] Style presets (vintage, cartoon, anime, etc.)
+- [ ] Social sharing integration
+- [ ] PWA support for offline use
+- [ ] Multi-language support
+- [ ] Template editor
+
+## 🔒 Privacy
+
+Your privacy is important to us:
+
+- **No server storage** - Images are never uploaded to our servers
+- **Local processing** - All image handling happens in your browser
+- **API key security** - Your Gemini API key stays in localStorage
+- **No tracking** - No analytics or user tracking
+- **No cookies** - We don't use cookies
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Vanilla JavaScript (ES6+), HTML5, CSS3
+- **AI**: Google Gemini API
+- **Storage**: IndexedDB, LocalStorage
+- **Testing**: Playwright
+- **Build**: None required! (Zero build tooling)
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ```
-@Initializer          →  Set up everything at once
-       ↓
-@Coder                →  Implement features
+MIT License - You are free to:
+✅ Use commercially
+✅ Modify
+✅ Distribute
+✅ Use privately
 ```
 
-## Prompt Commands
+## 🙏 Acknowledgments
 
-### Spec Kit Commands
+- [Google Gemini AI](https://ai.google.dev/) for the image generation API
+- [Playwright](https://playwright.dev/) for the excellent testing framework
+- All our amazing [contributors](https://github.com/chaitanyame/selfie-pullai/graphs/contributors)
 
-| Command | Purpose |
-|---------|---------|
-| `/speckit.constitution` | Create project principles and standards |
-| `/speckit.specify` | Create detailed feature specification |
-| `/speckit.plan` | Create implementation plan from specs |
-| `/speckit.tasks` | Generate actionable task list |
-| `/speckit.implement` | Implement a specific task |
+## 💬 Support
 
-### Harness Commands
+- 🐛 **Bug Reports**: [Open an issue](https://github.com/chaitanyame/selfie-pullai/issues/new?template=bug_report.md)
+- 💡 **Feature Requests**: [Open an issue](https://github.com/chaitanyame/selfie-pullai/issues/new?template=feature_request.md)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/chaitanyame/selfie-pullai/discussions)
 
-| Command | Purpose |
-|---------|---------|
-| `/harness.generate` | Convert tasks.md to feature_list.json |
-| `/harness.status` | View progress dashboard |
-| `/harness.verify` | Verify passing features |
-| `/harness.checkpoint` | Save session state |
-| `/harness.resume` | Resume from checkpoint |
-
-## Customization
-
-### Adding New Agents
-
-Create a file in `.github/agents/`:
-
-```markdown
----
-name: MyAgent
-description: What this agent does
-tools:
-  - editFiles
-  - search
 ---
 
-# My Agent
+<p align="center">
+  Made with ❤️ by the Open Source Community
+</p>
 
-Instructions for the agent...
-```
-
-### Adding New Prompts
-
-Create a file in `.github/prompts/`:
-
-```markdown
----
-agent: agent
-description: What this prompt does
----
-
-# My Prompt
-
-Prompt content...
-```
-
-## Based On
-
-This framework implements patterns from:
-- [Anthropic: Effective Harnesses for Long-Running Agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
-- [Anthropic Quickstart: Autonomous Coding](https://github.com/anthropics/claude-quickstarts/tree/main/autonomous-coding)
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and request features.
-
-Please note that this project is released with a [Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
+<p align="center">
+  <a href="https://github.com/chaitanyame/selfie-pullai/stargazers">⭐ Star us on GitHub!</a>
+</p>
