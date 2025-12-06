@@ -1,0 +1,26 @@
+{
+  "name": "selfie-pullai",
+  "version": "1.0.0",
+  "description": "A template repository for building **long-lived autonomous agents** within VS Code GitHub Copilot, based on [Anthropic's \"Effective Harnesses for Long-Running Agents\"](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chaitanyame/github_copilot_harness_framework.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chaitanyame/github_copilot_harness_framework/issues"
+  },
+  "homepage": "https://github.com/chaitanyame/github_copilot_harness_framework#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "serve": "^14.2.5",
+    "typescript": "^5.9.3"
+  }
+}

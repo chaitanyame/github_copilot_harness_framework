@@ -8,65 +8,65 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="app-header">
-    <h1>Selfie PullAI</h1>
-    <button class="info-btn" aria-label="About this app">ℹ️</button>
+  <header class="app-header" data-testid="app-header">
+    <h1 data-testid="app-title">Selfie PullAI</h1>
+    <button class="info-btn" aria-label="About this app" data-testid="info-btn">ℹ️</button>
   </header>
 
-  <main class="app-main">
+  <main class="app-main" data-testid="app-main">
     <!-- Section 1: Template Carousel -->
-    <section id="templates" class="section-templates" aria-labelledby="templates-heading">
+    <section id="templates" class="section-templates" aria-labelledby="templates-heading" data-testid="templates-section">
       <h2 id="templates-heading" class="visually-hidden">Celebrity Templates</h2>
-      <div class="carousel-container">
+      <div class="carousel-container" data-testid="carousel-container">
         <!-- Templates will be rendered here by JS -->
       </div>
     </section>
 
     <!-- Section 2: Upload Area -->
-    <section id="upload" class="section-upload" aria-labelledby="upload-heading">
+    <section id="upload" class="section-upload" aria-labelledby="upload-heading" data-testid="upload-section">
       <h2 id="upload-heading" class="visually-hidden">Upload Your Photo</h2>
-      <div class="upload-zone" role="button" tabindex="0" aria-label="Drop an image here or click to upload">
+      <div class="upload-zone" role="button" tabindex="0" aria-label="Drop an image here or click to upload" data-testid="upload-zone">
         <p>Drag & drop your photo here</p>
         <p>or</p>
-        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" class="visually-hidden">
-        <label for="file-input" class="upload-btn">Choose File</label>
-        <button id="camera-btn" class="camera-btn" aria-label="Take a photo with camera">📷 Take Photo</button>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" class="visually-hidden" data-testid="file-input">
+        <label for="file-input" class="upload-btn" data-testid="upload-btn">Choose File</label>
+        <button id="camera-btn" class="camera-btn" aria-label="Take a photo with camera" data-testid="camera-btn">📷 Take Photo</button>
       </div>
     </section>
 
     <!-- Section 3: Editor Panel -->
-    <section id="editor" class="section-editor" aria-labelledby="editor-heading">
+    <section id="editor" class="section-editor" aria-labelledby="editor-heading" data-testid="editor-section">
       <h2 id="editor-heading" class="visually-hidden">Image Editor</h2>
-      <div class="canvas-container">
-        <canvas id="preview-canvas" aria-label="Image preview canvas"></canvas>
+      <div class="canvas-container" data-testid="canvas-container">
+        <canvas id="preview-canvas" aria-label="Image preview canvas" data-testid="preview-canvas"></canvas>
       </div>
-      <div class="controls">
+      <div class="controls" data-testid="editor-controls">
         <!-- Controls will be added in a later feature -->
       </div>
     </section>
 
     <!-- Section 4: Action Buttons -->
-    <section id="actions" class="section-actions" aria-labelledby="actions-heading">
+    <section id="actions" class="section-actions" aria-labelledby="actions-heading" data-testid="actions-section">
       <h2 id="actions-heading" class="visually-hidden">Actions</h2>
-      <div class="action-buttons">
-        <button id="download-btn" class="action-btn" disabled>⬇️ Download</button>
-        <button id="share-btn" class="action-btn" disabled>🔗 Share</button>
-        <button id="reset-btn" class="action-btn" disabled>🔄 Reset</button>
-        <button id="history-btn" class="action-btn">📜 History</button>
+      <div class="action-buttons" data-testid="action-buttons">
+        <button id="download-btn" class="action-btn" disabled data-testid="download-btn">⬇️ Download</button>
+        <button id="share-btn" class="action-btn" disabled data-testid="share-btn">🔗 Share</button>
+        <button id="reset-btn" class="action-btn" disabled data-testid="reset-btn">🔄 Reset</button>
+        <button id="history-btn" class="action-btn" data-testid="history-btn">📜 History</button>
       </div>
     </section>
 
     <!-- History Panel (Hidden by default) -->
-    <aside id="history-panel" class="history-panel" hidden aria-labelledby="history-panel-heading">
+    <aside id="history-panel" class="history-panel" hidden aria-labelledby="history-panel-heading" data-testid="history-panel">
       <h2 id="history-panel-heading">Recent Creations</h2>
-      <div class="history-grid">
+      <div class="history-grid" data-testid="history-grid">
         <!-- History items will be rendered here by JS -->
       </div>
-      <button id="close-history-btn" class="close-btn" aria-label="Close history panel">✕</button>
+      <button id="close-history-btn" class="close-btn" aria-label="Close history panel" data-testid="close-history-btn">✕</button>
     </aside>
   </main>
 
-  <footer class="app-footer">
+  <footer class="app-footer" data-testid="app-footer">
     <p>&copy; 2025 Selfie PullAI. All processing happens on your device.</p>
   </footer>
 
