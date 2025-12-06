@@ -1,144 +1,58 @@
-# Agent Harness Framework - Constitution
+# Selfie PullAI Constitution
 
-> This is the **template constitution**. When using this framework for a real project, update this file with your project-specific principles using `/speckit.constitution`.
-
-This document defines the core principles that govern all agent behavior.
-
-## Framework Mission
-
-Enable developers to run **long-lived autonomous agents** within VS Code GitHub Copilot through file-based state management and incremental progress patterns.
+## Vision
+To build a high-performance, privacy-focused, client-side image processing application for selfies that leverages on-device AI (Gemini Nano Banana Image API) without compromising user data or application speed.
 
 ## Core Principles
+1.  **Zero-Dependency & Lightweight**: We strictly use Vanilla HTML5, CSS3, and ES6+ JavaScript. No external frameworks or libraries are allowed, except for the specific AI API. The total bundle size must remain under 150KB.
+2.  **Privacy First**: All image processing must occur client-side using the Canvas API. User images are never uploaded to a server. Data persistence is limited to local storage (max 10 items).
+3.  **Performance Obsessed**: The application must load in under 2 seconds, process images in under 500ms, and maintain 60 FPS during interactions like carousel scrolling.
+4.  **Mobile-First & Accessible**: Design starts at 320px width. The application must be fully accessible (WCAG 2.1 AA) and support touch interactions natively.
+5.  **Seamless UX**: Features like drag-and-drop and real-time previews are mandatory to ensure a fluid user experience.
 
-### 1. Test-Driven Development (TDD) - MANDATORY
-
-> ⚠️ **NON-NEGOTIABLE**: Implementation code MUST NOT be written before a failing test exists.
-
-- **RED**: Write the test FIRST - verify it FAILS
-- **GREEN**: Implement ONLY enough code to pass the test
-- **REFACTOR**: Clean up while keeping tests green
-- **ENFORCEMENT**: If test passes before implementation, the test is wrong
-- **VIOLATION**: Writing implementation before test is a framework violation
-
-### 2. Incremental Progress
-- One feature at a time
-- Complete before moving on
-- Commit after each success
-- Don't try to do too much
-
-### 3. File-Based Memory
-- All state lives in files
-- `feature_list.json` is the source of truth
-- Progress notes bridge sessions
-- Git history enables rollback
-
-### 3. Verify Before Claiming
-- Test features before marking complete
-- Check existing features still work
-- Quality over speed
-
-### 4. Document for Amnesia
-- Next agent has zero memory
-- Write clear progress notes
-- Explain decisions
-- Leave clean state
-
-### 5. Update Progress Immediately
-- Update progress notes after each feature completion
-- Document bugs/issues as soon as discovered
-- Write before ending session (mandatory)
-- Rule: "If you wouldn't remember it tomorrow, write it down now."
-
-### 6. Feature List is Sacred
-- Only change `passes` field
-- Never remove features
-- Never edit descriptions
-- Never modify steps
-
-## When Using This Template
-
-Replace this constitution with your project-specific principles:
-
-1. **Project Vision**: What are you building?
-2. **Core Principles**: What values guide decisions?
-3. **Technical Standards**: What languages, frameworks, conventions?
-4. **Libraries**: What libraries should be used? (see below)
-5. **Quality Gates**: What must pass before completion?
-6. **File Conventions**: How should files be organized?
-
-Use `/speckit.constitution` to generate a project-specific constitution.
+## Technical Standards
+-   **Language**: ES6+ JavaScript (No TypeScript compilation step unless zero-runtime overhead).
+-   **Markup**: Semantic HTML5.
+-   **Styling**: CSS3 (Variables, Flexbox, Grid). No preprocessors that require heavy build steps unless output is standard CSS.
+-   **Image Processing**: HTML5 Canvas API.
+-   **AI Integration**: Gemini Nano Banana Image API.
 
 ## Libraries
 
-> Configure your project's library preferences here. If not specified, framework defaults apply.
-> See `.github/instructions/libraries.instructions.md` for all defaults.
-
 ### Specified Libraries
-
 | Category | Library | Reason |
 |----------|---------|--------|
-| UI Testing | Playwright | (default) |
-| HTTP Client | fetch/requests | (default by language) |
-| _Add your overrides here_ | | |
+| AI / Image Processing | Gemini Nano Banana Image API | Required for on-device AI features. |
+| **Everything Else** | **NONE** | Strict zero-dependency policy to maintain <150KB bundle size. |
 
-### Library Resolution Order
+### Use Framework Defaults For
+-   **DOM Manipulation**: Native `document.querySelector`, `addEventListener`, etc.
+-   **State Management**: Native JavaScript Objects/Classes or `CustomEvent`.
+-   **HTTP Client**: Native `fetch` API (if needed for API keys/config, not image upload).
 
-1. Libraries specified in this section (highest priority)
-2. MCP tools if available (for simple operations)
-3. Framework defaults from `libraries.instructions.md`
+## Quality Gates
+-   [ ] **Bundle Size**: Total assets (HTML+CSS+JS) < 150KB.
+-   [ ] **Performance**: Load time < 2s, Processing < 500ms, Animations 60 FPS.
+-   [ ] **Accessibility**: Passes WCAG 2.1 AA audit.
+-   [ ] **Cross-Browser**: Verified on Chrome, Firefox, Safari, Edge.
+-   [ ] **Mobile**: Verified on iOS Safari and Android Chrome.
 
-### Example Overrides
+## File Conventions
+-   `index.html`: Main entry point.
+-   `css/style.css`: Main stylesheet.
+-   `js/app.js`: Main application logic.
+-   `js/modules/`: Separate modules for distinct functionality (e.g., `processor.js`, `ui.js`).
+-   `assets/`: Static images and icons.
 
-```markdown
-| Category | Library | Reason |
-|----------|---------|--------|
-| UI Testing | Cypress | Team already uses Cypress |
-| HTTP Client | axios | Need request interceptors |
-| API Framework | Fastify | Performance requirements |
-```
+## Testing Strategy
+-   **Manual Testing**: Since no automated UI framework is used to keep overhead low, rigorous manual testing is required on:
+    -   Desktop: Chrome, Firefox, Safari, Edge.
+    -   Mobile: iOS Safari, Android Chrome.
+-   **Performance Profiling**: Use Chrome DevTools Performance tab to verify FPS and processing times.
+-   **Lighthouse Audits**: Regular checks for Performance, Accessibility, and Best Practices.
 
-## Coding Standards
-
-When generating or modifying code:
-- Follow existing project conventions
-- Prefer clarity over cleverness
-- Include appropriate error handling
-- Write code that is easy to modify
-
-### When Modifying Files
-- Make minimal, focused changes
-- Preserve existing formatting
-- Document significant changes
-- Test changes when possible
-
-## Communication Standards
-
-### With Users
-- Be concise but thorough
-- Explain "why" not just "what"
-- Offer options when appropriate
-- Acknowledge limitations
-
-### Between Agents
-- Provide complete handoff context
-- Reference specific files and locations
-- State clear success criteria
-- Include rollback instructions
-
-## Boundaries
-
-### Agents Should
-- Ask for clarification when uncertain
-- Refuse clearly harmful requests
-- Suggest alternatives when blocked
-- Learn from feedback
-
-### Agents Should Not
-- Make assumptions about intent
-- Execute without a plan
-- Ignore project conventions
-- Forget to checkpoint state
-
----
-
-*This constitution may be amended as the project evolves. All agents must re-read this file when starting significant work.*
+## Governance & Decision Making
+-   **Performance > Convenience**: Technical decisions must prioritize end-user performance and bundle size over developer convenience.
+-   **Budget Enforcement**: Any new feature that threatens the 150KB limit or the 2s load time must be optimized or rejected.
+-   **Client-Side Mandate**: Any architectural proposal involving server-side image processing is automatically rejected.
+-   **UX Consistency**: All UI elements must support touch and mouse equally.

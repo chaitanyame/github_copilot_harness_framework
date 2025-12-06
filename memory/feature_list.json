@@ -23,7 +23,7 @@
       "name": "Implement CSS Variables & Reset",
       "description": "Define CSS variables for colors, fonts, and spacing to ensure consistency. Implement a minimal CSS reset to normalize browser styles.",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Define CSS variables for primary colors, fonts, and spacing",
         "Apply basic reset (box-sizing, margin/padding removal)",
@@ -36,7 +36,7 @@
       "name": "Implement Responsive Layout Skeleton",
       "description": "Build the main layout using CSS Grid/Flexbox. Create placeholders for Header, Template Carousel, Upload Area, Editor Panel, and Action Buttons. Ensure responsiveness from 320px to 2560px.",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create Header, Carousel, Upload, Editor, and Actions sections",
         "Ensure layout adapts to mobile (stacked) and desktop (side-by-side or grid) views",
@@ -49,7 +49,7 @@
       "name": "Define Template Data & Store Module",
       "description": "Create a hardcoded JSON array of celebrity templates. Implement the Store module to manage application state (current template, user image, history).",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create js/modules/store.js",
         "Implement state management logic (getters/setters/subscribers)",
@@ -62,7 +62,7 @@
       "name": "Implement IndexedDB Wrapper",
       "description": "Create a utility module for IndexedDB to store generated images (history). This replaces LocalStorage to handle larger image data blobs.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create js/modules/db.js (or similar)",
         "Implement functions for saveImage, getImages, deleteImage",
@@ -75,7 +75,7 @@
       "name": "Build Template Carousel with Lazy Loading",
       "description": "Render the template list into the UI. Implement a horizontal scroll or grid view. Use IntersectionObserver to lazy load template images.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Render templates from Store data",
         "Load images only when scrolled into view",
@@ -88,7 +88,7 @@
       "name": "Implement File Input & Drag-and-Drop",
       "description": "Implement handlers for file input selection and drag-and-drop events on the upload area. Validate file type and size (< 5MB).",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Highlight area when dragging a file over it",
         "Read dropped file as a Data URL/Blob",
@@ -102,7 +102,7 @@
       "name": "Implement Camera Capture",
       "description": "Add a 'Take Photo' button that opens the device camera using navigator.mediaDevices.getUserMedia. Capture a frame and pass it to the Store as the user image.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Open camera stream in a video element",
         "Freeze frame and convert to image on 'Capture' button click",
@@ -116,7 +116,7 @@
       "name": "Initialize Canvas & Basic Drawing",
       "description": "Set up the HTML5 Canvas element. Implement the rendering loop to draw the selected template (background) and the user's uploaded image (foreground).",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Create js/modules/canvas.js",
         "Resize canvas correctly to fit container/aspect ratio",
@@ -130,7 +130,7 @@
       "name": "Integrate Gemini Nano Banana Image API",
       "description": "Integrate the 'Gemini Nano Banana Image API' for image processing. If the API is for segmentation/background removal, apply it to the user image. If unavailable, implement a mock/fallback pass-through.",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Initialize API client (if applicable)",
         "Process user image through API before rendering",
@@ -143,7 +143,7 @@
       "name": "Implement Canvas Interaction (Drag/Move)",
       "description": "Add event listeners (mouse and touch) to the canvas to allow dragging the user image. Update the position coordinates in the Store/State.",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Make user image follow mouse/finger drag",
         "Ensure movement is smooth (60fps)",
@@ -156,7 +156,7 @@
       "name": "Implement Transformation Controls (Scale, Rotate, Opacity)",
       "description": "Create UI sliders for Scale, Rotation, and Opacity. Bind these inputs to update the rendering parameters.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Update visual state of user image on canvas via sliders",
         "Implement scale range: 50% - 200%",
@@ -170,7 +170,7 @@
       "name": "Optimize Rendering Loop",
       "description": "Ensure the canvas rendering uses requestAnimationFrame. Debounce slider inputs if necessary to prevent excessive state updates.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Decouple rendering logic from input events via requestAnimationFrame",
         "Ensure no visual lag during rapid slider movement",
@@ -182,7 +182,7 @@
       "name": "Implement Image Export",
       "description": "Add functionality to the 'Download' button. Convert the canvas content to a Blob/Data URL and trigger a browser download.",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Save image as PNG/JPG on Download click",
         "Include timestamp or template name in filename",
@@ -194,7 +194,7 @@
       "name": "Implement Share Functionality",
       "description": "Use the Web Share API to share the generated image. Fallback to clipboard copy if Web Share is unsupported.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Invoke native share sheet on mobile via 'Share' button",
         "Copy image or show instructions on desktop as fallback",
@@ -206,7 +206,7 @@
       "name": "Connect History UI",
       "description": "When an image is downloaded/shared, save it to IndexedDB. Render the list of recent images in the History section.",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Save generated images to DB",
         "Display thumbnails of recent images in History section",
@@ -219,7 +219,7 @@
       "name": "Accessibility Audit & Fixes",
       "description": "Run accessibility checks. Ensure all interactive elements have aria-labels, focus states are visible, and contrast ratios are sufficient.",
       "priority": "high",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Ensure keyboard navigation works for all controls",
         "Verify screen readers announce buttons and sliders correctly",
@@ -232,7 +232,7 @@
       "name": "Final Bundle Optimization",
       "description": "Review code for unused functions. Ensure assets are optimized. Verify total size is under 150KB (excluding external template images).",
       "priority": "medium",
-      "passes": false,
+      "passes": true,
       "steps": [
         "Ensure main bundle is < 150KB",
         "Clean and comment code",

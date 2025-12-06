@@ -1,0 +1,380 @@
+/**
+ * Canvas Module - Image Rendering & Manipulation
+ * 
+ * Handles all Canvas API operations:
+ * - Drawing template and user images
+ * - Applying transformations (position, scale, rotation, opacity)
+ * - Real-time preview with requestAnimationFrame
+ * - Image export
+ */
+
+import { Store } from './store.js';
+
+// Canvas state
+let canvas = null;
+let ctx = null;
+let templateImage = null;
+let userImageElement = null;
+let animationFrameId = null;
+let isDragging = false;
+let dragStart = { x: 0, y: 0 };
+
+// Canvas dimensions
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 800;
+
+/**
+ * Initialize canvas
+ */
+function init(canvasElement) {
+  canvas = canvasElement;
+  ctx = canvas.getContext('2d');
+  
+  // Set canvas size
+  canvas.width = CANVAS_WIDTH;
+  canvas.height = CANVAS_HEIGHT;
+  
+  // Subscribe to store changes
+  Store.subscribe(handleStateChange);
+  
+  // Setup event listeners for dragging
+  setupDragListeners();
+  
+  // Start render loop
+  startRenderLoop();
+  
+  console.log('Canvas initialized');
+}
+
+/**
+ * Handle state changes from Store
+ */
+function handleStateChange(event, data) {
+  switch (event) {
+    case 'templateSelected':
+      loadTemplateImage(data.imageUrl);
+      break;
+    case 'userImageChanged':
+      loadUserImage(data);
+      break;
+    case 'stateReset':
+      templateImage = null;
+      userImageElement = null;
+      break;
+  }
+}
+
+/**
+ * Load template image
+ */
+function loadTemplateImage(url) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    templateImage = img;
+  };
+  img.onerror = () => {
+    console.error('Failed to load template image:', url);
+  };
+  img.src = url;
+}
+
+/**
+ * Load user image from data URL or blob
+ */
+function loadUserImage(imageData) {
+  if (!imageData) {
+    userImageElement = null;
+    return;
+  }
+  
+  const img = new Image();
+  img.onload = () => {
+    userImageElement = img;
+  };
+  img.onerror = () => {
+    console.error('Failed to load user image');
+  };
+  img.src = imageData;
+}
+
+/**
+ * Setup drag event listeners for canvas
+ */
+function setupDragListeners() {
+  if (!canvas) return;
+
+  // Mouse events
+  canvas.addEventListener('mousedown', handleDragStart);
+  canvas.addEventListener('mousemove', handleDragMove);
+  canvas.addEventListener('mouseup', handleDragEnd);
+  canvas.addEventListener('mouseleave', handleDragEnd);
+
+  // Touch events
+  canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+  canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+  canvas.addEventListener('touchend', handleDragEnd);
+}
+
+/**
+ * Handle drag start
+ */
+function handleDragStart(e) {
+  if (!userImageElement) return;
+  
+  isDragging = true;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  dragStart = {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY
+  };
+}
+
+/**
+ * Handle touch start
+ */
+function handleTouchStart(e) {
+  if (!userImageElement) return;
+  e.preventDefault();
+  
+  const touch = e.touches[0];
+  isDragging = true;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  dragStart = {
+    x: (touch.clientX - rect.left) * scaleX,
+    y: (touch.clientY - rect.top) * scaleY
+  };
+}
+
+/**
+ * Handle drag move
+ */
+function handleDragMove(e) {
+  if (!isDragging || !userImageElement) return;
+  
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  const currentX = (e.clientX - rect.left) * scaleX;
+  const currentY = (e.clientY - rect.top) * scaleY;
+  
+  const deltaX = currentX - dragStart.x;
+  const deltaY = currentY - dragStart.y;
+  
+  const params = Store.getEditParams();
+  Store.updateEditParams({
+    posX: params.posX + deltaX,
+    posY: params.posY + deltaY
+  });
+  
+  dragStart = { x: currentX, y: currentY };
+}
+
+/**
+ * Handle touch move
+ */
+function handleTouchMove(e) {
+  if (!isDragging || !userImageElement) return;
+  e.preventDefault();
+  
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  const currentX = (touch.clientX - rect.left) * scaleX;
+  const currentY = (touch.clientY - rect.top) * scaleY;
+  
+  const deltaX = currentX - dragStart.x;
+  const deltaY = currentY - dragStart.y;
+  
+  const params = Store.getEditParams();
+  Store.updateEditParams({
+    posX: params.posX + deltaX,
+    posY: params.posY + deltaY
+  });
+  
+  dragStart = { x: currentX, y: currentY };
+}
+
+/**
+ * Handle drag end
+ */
+function handleDragEnd() {
+  isDragging = false;
+}
+
+/**
+ * Start the render loop
+ */
+function startRenderLoop() {
+  function render() {
+    draw();
+    animationFrameId = requestAnimationFrame(render);
+  }
+  render();
+}
+
+/**
+ * Stop the render loop
+ */
+function stopRenderLoop() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+}
+
+/**
+ * Main draw function
+ */
+function draw() {
+  if (!ctx) return;
+  
+  // Clear canvas
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw template (background)
+  if (templateImage) {
+    drawImageCover(templateImage, 0, 0, canvas.width, canvas.height);
+  } else {
+    // Draw placeholder
+    ctx.fillStyle = '#2d2d44';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#a0a0b0';
+    ctx.font = '24px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Select a template', canvas.width / 2, canvas.height / 2);
+  }
+  
+  // Draw user image (foreground) with transformations
+  if (userImageElement) {
+    const params = Store.getEditParams();
+    drawUserImage(params);
+  }
+}
+
+/**
+ * Draw image maintaining aspect ratio (cover)
+ */
+function drawImageCover(img, x, y, w, h) {
+  const imgRatio = img.width / img.height;
+  const canvasRatio = w / h;
+  
+  let drawWidth, drawHeight, offsetX, offsetY;
+  
+  if (imgRatio > canvasRatio) {
+    drawHeight = h;
+    drawWidth = img.width * (h / img.height);
+    offsetX = (w - drawWidth) / 2;
+    offsetY = 0;
+  } else {
+    drawWidth = w;
+    drawHeight = img.height * (w / img.width);
+    offsetX = 0;
+    offsetY = (h - drawHeight) / 2;
+  }
+  
+  ctx.drawImage(img, x + offsetX, y + offsetY, drawWidth, drawHeight);
+}
+
+/**
+ * Draw user image with transformations
+ */
+function drawUserImage(params) {
+  const { posX, posY, scale, rotation, opacity } = params;
+  
+  ctx.save();
+  
+  // Apply opacity
+  ctx.globalAlpha = opacity / 100;
+  
+  // Calculate center of canvas
+  const centerX = canvas.width / 2 + posX;
+  const centerY = canvas.height / 2 + posY;
+  
+  // Move to center, rotate, then draw
+  ctx.translate(centerX, centerY);
+  ctx.rotate((rotation * Math.PI) / 180);
+  
+  // Calculate scaled dimensions
+  const scaleFactor = scale / 100;
+  const imgWidth = userImageElement.width * scaleFactor;
+  const imgHeight = userImageElement.height * scaleFactor;
+  
+  // Limit max size to canvas
+  const maxSize = Math.min(canvas.width, canvas.height) * 0.8;
+  let finalWidth = imgWidth;
+  let finalHeight = imgHeight;
+  
+  if (imgWidth > maxSize || imgHeight > maxSize) {
+    const ratio = Math.min(maxSize / imgWidth, maxSize / imgHeight);
+    finalWidth = imgWidth * ratio;
+    finalHeight = imgHeight * ratio;
+  }
+  
+  // Draw centered
+  ctx.drawImage(
+    userImageElement,
+    -finalWidth / 2,
+    -finalHeight / 2,
+    finalWidth,
+    finalHeight
+  );
+  
+  ctx.restore();
+}
+
+/**
+ * Export canvas as data URL
+ */
+function exportAsDataURL(format = 'image/png', quality = 0.92) {
+  if (!canvas) return null;
+  return canvas.toDataURL(format, quality);
+}
+
+/**
+ * Export canvas as Blob
+ */
+function exportAsBlob(format = 'image/png', quality = 0.92) {
+  return new Promise((resolve) => {
+    if (!canvas) {
+      resolve(null);
+      return;
+    }
+    canvas.toBlob(resolve, format, quality);
+  });
+}
+
+/**
+ * Get canvas dimensions
+ */
+function getDimensions() {
+  return { width: CANVAS_WIDTH, height: CANVAS_HEIGHT };
+}
+
+/**
+ * Check if canvas is ready for export
+ */
+function isReadyForExport() {
+  return templateImage !== null && userImageElement !== null;
+}
+
+// Export Canvas API
+export const Canvas = {
+  init,
+  draw,
+  exportAsDataURL,
+  exportAsBlob,
+  getDimensions,
+  isReadyForExport,
+  stopRenderLoop
+};

@@ -5,30 +5,41 @@
  * It imports modules and initializes the app on DOMContentLoaded.
  */
 
+import { Store } from './modules/store.js';
+import { DB } from './modules/db.js';
+import { UI } from './modules/ui.js';
+import { Processor } from './modules/processor.js';
+
 // App initialization
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Selfie PullAI initialized');
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('Selfie PullAI starting...');
   
-  // Verify CSS is loaded
-  const bodyStyle = getComputedStyle(document.body);
-  const bgColor = bodyStyle.backgroundColor;
-  console.log('Background color:', bgColor);
-  
-  // Initialize modules (will be added in subsequent features)
-  initApp();
+  try {
+    await initApp();
+    console.log('Selfie PullAI ready!');
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+  }
 });
 
 /**
  * Initialize the application
  */
-function initApp() {
-  // Placeholder for future module initialization
-  // - Store module
-  // - Canvas module
-  // - UI module
-  // - Processor module (Gemini Nano Banana API)
+async function initApp() {
+  // Initialize IndexedDB
+  await DB.initDB();
+  console.log('Database initialized');
   
-  console.log('App modules ready for initialization');
+  // Initialize UI (which also initializes Canvas)
+  UI.init();
+  console.log('UI initialized');
+  
+  // Log capabilities
+  const capabilities = Processor.getCapabilities();
+  console.log('Processor capabilities:', capabilities);
+  
+  // Log initial state
+  console.log('Templates loaded:', Store.getTemplates().length);
 }
 
 // Export for module usage
