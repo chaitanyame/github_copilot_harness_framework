@@ -121,7 +121,7 @@ function handleStateChange(event, data, state) {
 }
 
 /**
- * Render template carousel
+ * Render template carousel - Scene-based templates
  */
 function renderTemplates() {
   const templates = Store.getTemplates();
@@ -134,13 +134,13 @@ function renderTemplates() {
          data-id="${template.id}" 
          tabindex="0" 
          role="button"
-         aria-label="Select ${template.name}">
-      <img src="${template.imageUrl}" 
-           alt="${template.name}" 
-           loading="lazy">
+         aria-label="Select ${template.name} with ${template.celebrity}">
+      <div class="scene-preview" style="background: linear-gradient(135deg, ${getSceneGradient(template.scene)})">
+        <span class="scene-tag">${template.scene}</span>
+        <span class="celebrity-overlay">📸 ${template.celebrity}</span>
+      </div>
       <div class="template-info">
         <div class="template-name">${template.name}</div>
-        <div class="template-category">${template.category}</div>
         ${template.trendingRank <= 3 ? '<span class="trending-badge">🔥 Trending</span>' : ''}
       </div>
     </div>
@@ -156,33 +156,27 @@ function renderTemplates() {
       }
     });
   });
-  
-  // Setup lazy loading with IntersectionObserver
-  setupLazyLoading();
 }
 
 /**
- * Setup lazy loading for template images
+ * Get gradient colors for scene
  */
-function setupLazyLoading() {
-  const images = elements.carouselContainer?.querySelectorAll('img[loading="lazy"]');
-  
-  if (!images || !('IntersectionObserver' in window)) return;
-  
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
-          img.removeAttribute('data-src');
-        }
-        observer.unobserve(img);
-      }
-    });
-  }, { rootMargin: '100px' });
-  
-  images.forEach(img => observer.observe(img));
+function getSceneGradient(scene) {
+  const gradients = {
+    'beach': '#87CEEB, #F4A460',
+    'red-carpet': '#8B0000, #4a0000',
+    'stadium': '#228B22, #006400',
+    'cafe': '#D2691E, #8B4513',
+    'mountain': '#87CEEB, #708090',
+    'film-set': '#2F4F4F, #1a1a1a',
+    'concert': '#8B008B, #4B0082',
+    'yacht': '#00CED1, #4169E1',
+    'awards': '#FFD700, #B8860B',
+    'street': '#FF6347, #FF4500',
+    'gym': '#2F4F4F, #1a1a1a',
+    'temple': '#FF8C00, #DAA520'
+  };
+  return gradients[scene] || '#666, #333';
 }
 
 /**
@@ -334,7 +328,7 @@ function handleUploadKeydown(e) {
 }
 
 /**
- * Process uploaded file
+ * Process uploaded file and generate selfie
  */
 async function processFile(file) {
   // Validate file type
@@ -351,21 +345,29 @@ async function processFile(file) {
     return;
   }
   
+  // Check if template is selected
+  const template = Store.getSelectedTemplate();
+  if (!template) {
+    showToast('Please select a celebrity template first', 'warning');
+    return;
+  }
+  
   Store.setProcessing(true);
+  showToast(`Generating selfie with ${template.celebrity}...`, 'info');
   
   try {
     // Read file as data URL
-    const dataUrl = await readFileAsDataURL(file);
+    const userImageData = await readFileAsDataURL(file);
     
-    // Process through AI (or fallback)
-    const processedImage = await Processor.processImage(dataUrl);
+    // Generate selfie using Gemini Nano Banana API (or fallback)
+    const generatedSelfie = await Processor.generateSelfiePull(userImageData, template);
     
-    // Update store
-    Store.setUserImage(processedImage);
-    showToast('Image uploaded successfully', 'success');
+    // Update store with generated image
+    Store.setUserImage(generatedSelfie);
+    showToast(`Selfie with ${template.celebrity} created!`, 'success');
   } catch (error) {
-    console.error('Error processing file:', error);
-    showToast('Failed to process image', 'error');
+    console.error('Error generating selfie:', error);
+    showToast('Failed to generate selfie', 'error');
   } finally {
     Store.setProcessing(false);
   }
@@ -452,9 +454,9 @@ function showCameraModal(stream) {
 }
 
 /**
- * Capture frame from video
+ * Capture frame from video and generate selfie
  */
-function captureFrame(video) {
+async function captureFrame(video) {
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -462,9 +464,32 @@ function captureFrame(video) {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0);
   
-  const dataUrl = canvas.toDataURL('image/png');
-  Store.setUserImage(dataUrl);
-  showToast('Photo captured!', 'success');
+  const userImageData = canvas.toDataURL('image/png');
+  
+  // Check if template is selected
+  const template = Store.getSelectedTemplate();
+  if (!template) {
+    // Just store the captured image if no template selected
+    Store.setUserImage(userImageData);
+    showToast('Photo captured! Select a celebrity template to generate selfie.', 'info');
+    return;
+  }
+  
+  // Generate selfie with selected template
+  Store.setProcessing(true);
+  showToast(`Generating selfie with ${template.celebrity}...`, 'info');
+  
+  try {
+    const generatedSelfie = await Processor.generateSelfiePull(userImageData, template);
+    Store.setUserImage(generatedSelfie);
+    showToast(`Selfie with ${template.celebrity} created!`, 'success');
+  } catch (error) {
+    console.error('Error generating selfie:', error);
+    showToast('Failed to generate selfie', 'error');
+    Store.setUserImage(userImageData);
+  } finally {
+    Store.setProcessing(false);
+  }
 }
 
 /**

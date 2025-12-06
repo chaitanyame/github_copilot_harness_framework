@@ -2,26 +2,147 @@
  * Store Module - State Management
  * 
  * Manages application state including:
- * - Current template selection
- * - User uploaded image
+ * - Current template selection (celebrity + scene)
+ * - User uploaded image (face photo)
  * - Edit parameters (position, scale, rotation, opacity)
  * - History reference
  */
 
-// Template data - trending celebrities
+// Template data - Pre-made celebrity selfie scenes
+// Each template is a scene where user's face will be composited
 const TEMPLATES = [
-  { id: 'celeb-1', name: 'Movie Star', category: 'Actor', imageUrl: 'https://picsum.photos/seed/celeb1/400/400', trendingScore: 98, trendingRank: 1 },
-  { id: 'celeb-2', name: 'Pop Icon', category: 'Musician', imageUrl: 'https://picsum.photos/seed/celeb2/400/400', trendingScore: 95, trendingRank: 2 },
-  { id: 'celeb-3', name: 'Sports Legend', category: 'Athlete', imageUrl: 'https://picsum.photos/seed/celeb3/400/400', trendingScore: 92, trendingRank: 3 },
-  { id: 'celeb-4', name: 'Comedy King', category: 'Actor', imageUrl: 'https://picsum.photos/seed/celeb4/400/400', trendingScore: 90, trendingRank: 4 },
-  { id: 'celeb-5', name: 'Rock Star', category: 'Musician', imageUrl: 'https://picsum.photos/seed/celeb5/400/400', trendingScore: 88, trendingRank: 5 },
-  { id: 'celeb-6', name: 'Action Hero', category: 'Actor', imageUrl: 'https://picsum.photos/seed/celeb6/400/400', trendingScore: 85, trendingRank: 6 },
-  { id: 'celeb-7', name: 'Tennis Star', category: 'Athlete', imageUrl: 'https://picsum.photos/seed/celeb7/400/400', trendingScore: 83, trendingRank: 7 },
-  { id: 'celeb-8', name: 'Hip Hop Artist', category: 'Musician', imageUrl: 'https://picsum.photos/seed/celeb8/400/400', trendingScore: 80, trendingRank: 8 },
-  { id: 'celeb-9', name: 'Drama Queen', category: 'Actor', imageUrl: 'https://picsum.photos/seed/celeb9/400/400', trendingScore: 78, trendingRank: 9 },
-  { id: 'celeb-10', name: 'Soccer Champion', category: 'Athlete', imageUrl: 'https://picsum.photos/seed/celeb10/400/400', trendingScore: 75, trendingRank: 10 },
-  { id: 'celeb-11', name: 'Country Star', category: 'Musician', imageUrl: 'https://picsum.photos/seed/celeb11/400/400', trendingScore: 72, trendingRank: 11 },
-  { id: 'celeb-12', name: 'Thriller Actor', category: 'Actor', imageUrl: 'https://picsum.photos/seed/celeb12/400/400', trendingScore: 70, trendingRank: 12 }
+  { 
+    id: 'scene-1', 
+    name: 'Beach Sunset Selfie', 
+    celebrity: 'Amitabh Bachchan',
+    scene: 'beach',
+    description: 'Sunset selfie on the beach',
+    prompt: 'A selfie photo of a person with Amitabh Bachchan on a beautiful beach at sunset, golden hour lighting, waves in background',
+    previewUrl: 'assets/templates/beach-selfie.jpg',
+    trendingScore: 98, 
+    trendingRank: 1 
+  },
+  { 
+    id: 'scene-2', 
+    name: 'Red Carpet Moment', 
+    celebrity: 'Shah Rukh Khan',
+    scene: 'red-carpet',
+    description: 'Red carpet premiere photo',
+    prompt: 'A selfie photo of a person with Shah Rukh Khan at a red carpet movie premiere, flashbulbs, glamorous setting',
+    previewUrl: 'assets/templates/red-carpet.jpg',
+    trendingScore: 95, 
+    trendingRank: 2 
+  },
+  { 
+    id: 'scene-3', 
+    name: 'Stadium Victory', 
+    celebrity: 'Virat Kohli',
+    scene: 'stadium',
+    description: 'Cricket stadium celebration',
+    prompt: 'A selfie photo of a person with Virat Kohli at a cricket stadium, cheering crowd, victory celebration',
+    previewUrl: 'assets/templates/stadium.jpg',
+    trendingScore: 92, 
+    trendingRank: 3 
+  },
+  { 
+    id: 'scene-4', 
+    name: 'Coffee Shop Chat', 
+    celebrity: 'Priyanka Chopra',
+    scene: 'cafe',
+    description: 'Casual coffee shop moment',
+    prompt: 'A selfie photo of a person with Priyanka Chopra at a cozy coffee shop, warm lighting, casual friendly vibe',
+    previewUrl: 'assets/templates/cafe.jpg',
+    trendingScore: 90, 
+    trendingRank: 4 
+  },
+  { 
+    id: 'scene-5', 
+    name: 'Mountain Adventure', 
+    celebrity: 'Ranveer Singh',
+    scene: 'mountain',
+    description: 'Hiking adventure selfie',
+    prompt: 'A selfie photo of a person with Ranveer Singh on a mountain peak, adventure hiking gear, beautiful vista',
+    previewUrl: 'assets/templates/mountain.jpg',
+    trendingScore: 88, 
+    trendingRank: 5 
+  },
+  { 
+    id: 'scene-6', 
+    name: 'Film Set Visit', 
+    celebrity: 'Alia Bhatt',
+    scene: 'film-set',
+    description: 'Behind the scenes on set',
+    prompt: 'A selfie photo of a person with Alia Bhatt on a movie set, cameras and lights in background, film production',
+    previewUrl: 'assets/templates/film-set.jpg',
+    trendingScore: 85, 
+    trendingRank: 6 
+  },
+  { 
+    id: 'scene-7', 
+    name: 'Concert Backstage', 
+    celebrity: 'Arijit Singh',
+    scene: 'concert',
+    description: 'Backstage at a concert',
+    prompt: 'A selfie photo of a person with Arijit Singh backstage at a concert, music equipment, stage lights',
+    previewUrl: 'assets/templates/concert.jpg',
+    trendingScore: 83, 
+    trendingRank: 7 
+  },
+  { 
+    id: 'scene-8', 
+    name: 'Luxury Yacht', 
+    celebrity: 'Deepika Padukone',
+    scene: 'yacht',
+    description: 'Luxury yacht party',
+    prompt: 'A selfie photo of a person with Deepika Padukone on a luxury yacht, ocean in background, glamorous setting',
+    previewUrl: 'assets/templates/yacht.jpg',
+    trendingScore: 80, 
+    trendingRank: 8 
+  },
+  { 
+    id: 'scene-9', 
+    name: 'Award Show', 
+    celebrity: 'Ranbir Kapoor',
+    scene: 'awards',
+    description: 'At the award ceremony',
+    prompt: 'A selfie photo of a person with Ranbir Kapoor at an award show, trophy in background, formal attire',
+    previewUrl: 'assets/templates/awards.jpg',
+    trendingScore: 78, 
+    trendingRank: 9 
+  },
+  { 
+    id: 'scene-10', 
+    name: 'Street Food Fun', 
+    celebrity: 'Akshay Kumar',
+    scene: 'street',
+    description: 'Street food adventure',
+    prompt: 'A selfie photo of a person with Akshay Kumar at a street food stall, vibrant Indian street scene, fun casual moment',
+    previewUrl: 'assets/templates/street-food.jpg',
+    trendingScore: 75, 
+    trendingRank: 10 
+  },
+  { 
+    id: 'scene-11', 
+    name: 'Gym Workout', 
+    celebrity: 'Tiger Shroff',
+    scene: 'gym',
+    description: 'Gym workout session',
+    prompt: 'A selfie photo of a person with Tiger Shroff at a fitness gym, workout equipment, healthy lifestyle',
+    previewUrl: 'assets/templates/gym.jpg',
+    trendingScore: 72, 
+    trendingRank: 11 
+  },
+  { 
+    id: 'scene-12', 
+    name: 'Temple Visit', 
+    celebrity: 'Katrina Kaif',
+    scene: 'temple',
+    description: 'Spiritual temple visit',
+    prompt: 'A selfie photo of a person with Katrina Kaif at a beautiful Indian temple, traditional architecture, peaceful setting',
+    previewUrl: 'assets/templates/temple.jpg',
+    trendingScore: 70, 
+    trendingRank: 12 
+  }
 ];
 
 // Default edit parameters

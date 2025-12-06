@@ -5,7 +5,7 @@ This file bridges context between agent sessions. Each agent reads this at the s
 ## Current Status
 
 **Project**: Selfie PullAI - Celebrity Selfie Generator
-**Status**: ✅ IMPLEMENTATION COMPLETE + TESTED
+**Status**: ✅ IMPLEMENTATION COMPLETE + TESTED + SCENE-BASED TEMPLATES
 **Features**: 18/18 Passing
 **Tests**: 118/118 Passing (Playwright)
 **Bundle Size**: 57.5KB (target: <150KB) ✓
@@ -15,9 +15,45 @@ This file bridges context between agent sessions. Each agent reads this at the s
 ## Next Steps
 1. ~~All features implemented~~ ✅
 2. ~~Playwright tests added~~ ✅
-3. Create PR to merge to `dev` branch
+3. ~~Updated to scene-based templates~~ ✅
+4. Create PR to merge to `dev` branch
 
 ## Session History
+
+### Session 4 - 2025-12-05
+
+**Feature**: Scene-Based Templates + Gemini Nano Banana API Integration
+**Status**: ✅ COMPLETE
+
+#### Accomplished
+- Updated templates from celebrity-only to SCENE-based templates
+  - 12 scene templates (beach, red-carpet, stadium, cafe, mountain, etc.)
+  - Each template has: celebrity, scene, prompt, description
+- Updated `store.js` with new TEMPLATES structure including Indian celebrities:
+  - Amitabh Bachchan, Shah Rukh Khan, Virat Kohli, Priyanka Chopra, etc.
+- Updated `processor.js` with `generateSelfiePull()` function:
+  - Integrates with Gemini Nano Banana Image API
+  - Falls back to canvas-based preview when API unavailable
+  - Scene-specific gradient backgrounds
+- Updated `ui.js`:
+  - `renderTemplates()` now shows scene cards with overlays
+  - `processFile()` requires template selection before upload
+  - `captureFrame()` supports generation flow from camera capture
+- Updated `style.css` with new scene card CSS:
+  - `.scene-preview` with gradient overlays
+  - `.scene-tag` for scene type label
+  - `.celebrity-overlay` for celebrity name display
+- All 118 Playwright tests still passing ✅
+
+#### Flow
+1. User selects a celebrity scene template
+2. User uploads their face photo (or takes selfie)
+3. App calls Gemini Nano Banana API with template prompt + user face
+4. Generated selfie displayed on canvas
+5. User can download/share the result
+
+#### Commits
+- (pending) feat: scene-based templates + Gemini Nano Banana API integration
 
 ### Session 3 - 2025-12-05
 
